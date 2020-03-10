@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_findquests">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.questory3.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_message"
+        android:name="com.example.questory3.ui.message.MessageFragment"
+        android:label="@string/menu_message"
+        tools:layout="@layout/fragment_message" />
+
+    <fragment
+        android:id="@+id/nav_forcheck"
+        android:name="com.example.questory3.ui.forcheck.ForCheckFragment"
+        android:label="@string/forcheck"
+        tools:layout="@layout/fragment_forcheck" />
+
+    <fragment
+        android:id="@+id/nav_findquests"
+        android:name="com.example.questory3.ui.findQuests.FindQuestsFragment"
+        android:label="@string/findquests"
+        tools:layout="@layout/fragment_findquests" />
+
+    <fragment
+        android:id="@+id/nav_myquests"
+        android:name="com.example.questory3.ui.myQuests.MyQuestsFragment"
+        android:label="@string/myquests"
+        tools:layout="@layout/fragment_myquests" />
+
+    <fragment
+        android:id="@+id/nav_startedquests"
+        android:name="com.example.questory3.ui.startedQuests.StartedQuestsFragment"
+        android:label="@string/startedquests"
+        tools:layout="@layout/fragment_startedquests" />
+    <fragment
+        android:id="@+id/nav_endedquests"
+        android:name="com.example.questory3.ui.endedQuests.EndedQuestsFragment"
+        android:label="@string/endedquests"
+        tools:layout="@layout/fragment_endedquests" />
+
+    <fragment
+        android:id="@+id/nav_share"
+        android:name="com.example.questory3.ui.share.ShareFragment"
+        android:label="@string/menu_share"
+        tools:layout="@layout/fragment_share" />
+
+    <fragment
+        android:id="@+id/nav_send"
+        android:name="com.example.questory3.ui.send.SendFragment"
+        android:label="@string/todevelopers"
+        tools:layout="@layout/fragment_send" />
+</navigation>

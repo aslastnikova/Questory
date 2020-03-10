@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="all">
+<!--        <item-->
+<!--            android:id="@+id/nav_settings"-->
+<!--            android:icon="@drawable/ic_menu_manage"-->
+<!--            android:title="@string/settings" />-->
+        <item
+            android:id="@+id/nav_message"
+            android:icon="@drawable/baseline_email_24"
+            android:title="@string/message" />
+        <item
+            android:id="@+id/nav_forcheck"
+            android:icon="@drawable/baseline_check_circle_24"
+            android:title="@string/forcheck" />
+
+    </group>
+
+    <item android:title="@string/quests">
+        <menu>
+            <item
+                android:id="@+id/nav_findquests"
+                android:icon="@drawable/baseline_search_24"
+                android:title="@string/findquests" />
+            <item
+            android:id="@+id/nav_myquests"
+            android:icon="@drawable/outline_extension_24"
+            android:title="@string/myquests" />
+            <item
+                android:id="@+id/nav_startedquests"
+                android:icon="@drawable/start"
+                android:title="@string/startedquests" />
+            <item
+                android:id="@+id/nav_endedquests"
+                android:icon="@drawable/outline_check_circle_24"
+                android:title="@string/endedquests" />
+        </menu>
+    </item>
+<!--    <item android:title="Поделиться">-->
+<!--        <menu>-->
+<!--        <item-->
+<!--            android:id="@+id/nav_share"-->
+<!--            android:icon="@drawable/ic_menu_share"-->
+<!--            android:title="@string/menu_share" />-->
+<!--        <item-->
+<!--            android:id="@+id/nav_send"-->
+<!--            app:actionLayout="@layout/custom_menu_item"-->
+<!--            />-->
+<!--&lt;!&ndash;            android:icon="@drawable/ic_menu_send"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:title="@string/todevelopers"&ndash;&gt;-->
+
+<!--        </menu>-->
+<!--    </item>-->
+
+</menu>

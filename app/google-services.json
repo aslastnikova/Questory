@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "446183912844",
+    "firebase_url": "https://questory-9782d.firebaseio.com",
+    "project_id": "questory-9782d",
+    "storage_bucket": "questory-9782d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446183912844:android:ab0e18c607b698de7d52a9",
+        "android_client_info": {
+          "package_name": "com.example.questory3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "446183912844-to6bgsjr83iqd051sg0g39vg8u33bv4p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.questory3",
+            "certificate_hash": "466163e7cb5c3913ca8e016fe38fd57cdde4dbd1"
+          }
+        },
+        {
+          "client_id": "446183912844-r0n577b1t0glp2v4p0t5ds903dfjkj0a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS_t983DK3gK__03MbLQhkYrWe4Xmd8Nk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "446183912844-r0n577b1t0glp2v4p0t5ds903dfjkj0a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
