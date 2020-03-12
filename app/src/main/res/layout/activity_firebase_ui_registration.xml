@@ -72,7 +72,7 @@
                 android:background="@drawable/background_shape_light"
                 android:ems="10"
                 android:hint="Имя*"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textCapWords"
                 android:minHeight="40dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -95,7 +95,7 @@
                 android:background="@drawable/background_shape_light"
                 android:ems="10"
                 android:hint="Фамилия*"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textCapWords"
                 android:minHeight="40dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -186,14 +186,33 @@
                 android:text="Запомнить меня"
                 android:textColor="@color/white" />
 
-            <TextView
-                android:id="@+id/textView13"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Вы даете свое согласие на обработку персональных данных"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/privacypolicy"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/white"
+                    android:gravity="top"
+                    android:layout_weight="1"
+                    android:text=""
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/privacypolicy1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8.5"
+                    android:autoLink="web"
+                    android:gravity="left"
+                    android:buttonTint="@color/white"
+                    android:text="Вы даете свое согласие на обработку персональных данных"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/btn_register"

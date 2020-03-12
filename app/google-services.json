@@ -10,17 +10,17 @@
       "client_info": {
         "mobilesdk_app_id": "1:446183912844:android:ab0e18c607b698de7d52a9",
         "android_client_info": {
-          "package_name": "com.example.questory3"
+          "package_name": "com.slastanna.questory"
         }
       },
       "oauth_client": [
         {
           "client_id": "446183912844-to6bgsjr83iqd051sg0g39vg8u33bv4p.apps.googleusercontent.com",
           "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.questory3",
-            "certificate_hash": "466163e7cb5c3913ca8e016fe38fd57cdde4dbd1"
-          }
+			"android_info": {
+				"package_name": "com.slastanna.questory",
+				"certificate_hash": "466163e7cb5c3913ca8e016fe38fd57cdde4dbd1"
+			}
         },
         {
           "client_id": "446183912844-r0n577b1t0glp2v4p0t5ds903dfjkj0a.apps.googleusercontent.com",
