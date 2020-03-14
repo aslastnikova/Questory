@@ -31,45 +31,6 @@ class MyLocationListener implements LocationListener {
         context=mcontext;
         activity=mactivity;
         getLocation();
-//        LocationManager locationManager = (LocationManager)
-//                context.getSystemService(Context.LOCATION_SERVICE);
-//
-//        LocationListener locationListener = new MyLocationListener();
-//
-//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // Проверка наличия разрешений
-//            // Если нет разрешения на использование соответсвующих разркешений выполняем какие-то действия
-//            PermissionsListener permissionsListener = new PermissionsListener() {
-//                @Override
-//                public void onExplanationNeeded(List<String> permissionsToExplain) {
-//                    Toast.makeText(context, R.string.user_location_permission_explanation,
-//                            Toast.LENGTH_LONG).show();
-//                }
-//
-//                @Override
-//                public void onPermissionResult(boolean granted) {
-//                    if (granted) {
-//
-//                    } else {
-//                        Toast.makeText(context, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-//
-//                    }
-//                }
-//            };
-//            permissionsManager = new PermissionsManager(permissionsListener);
-//            permissionsManager.requestLocationPermissions(activity);
-//        }else{
-//            locationManager.requestLocationUpdates(
-//                    LocationManager.GPS_PROVIDER,
-//                    5000,
-//                    10,
-//                    locationListener); // здесь можно указать другие более подходящие вам параметры
-//
-//            imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        }
-
-
-
     }
 
     public static void getLocation(){
@@ -112,32 +73,6 @@ class MyLocationListener implements LocationListener {
         }
 
     }
-
-//    public void getPermission(Context context, Activity activity){
-//        if (PermissionsManager.areLocationPermissionsGranted(context)) {
-//
-//        } else {
-//            permissionsManager = new PermissionsManager(this);
-//            permissionsManager.requestLocationPermissions(activity);
-//
-//        }
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//    }
-
-//    @Override
-//    public void onExplanationNeeded(List<String> permissionsToExplain) {
-//
-//    }
-//
-//    @Override
-//    public void onPermissionResult(boolean granted) {
-//
-//    }
 
     public static double getLat(){
         if(imHere!=null){

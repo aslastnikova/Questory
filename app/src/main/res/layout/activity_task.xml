@@ -14,8 +14,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:foregroundGravity="top"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:foregroundGravity="top">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,8 +27,8 @@
                 android:id="@+id/timage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="300dp"
-                android:adjustViewBounds="true" />
+                android:adjustViewBounds="true"
+                android:maxHeight="300dp" />
 
             <View
                 android:id="@+id/divider2"
@@ -41,8 +41,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
-                android:paddingBottom="10dp"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/theader"
@@ -90,6 +90,8 @@
                     android:inputType="textAutoCorrect|textMultiLine|textCapSentences"
                     android:minHeight="40dp"
                     android:paddingVertical="5dp"
+
+
                     android:paddingBottom="5dp"
                     android:singleLine="false"
                     android:textColor="@color/colorPrimaryDark"
@@ -99,23 +101,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        android:id="@+id/buttonSendAnswer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingLeft="40dp"
-                        android:paddingRight="40dp"
-                        android:backgroundTint="@color/colorPrimaryDark"
-                        android:text="Отправить ответ"
-                        android:textColor="@color/white"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
                     <ImageView
                         android:id="@+id/hint"
@@ -123,14 +110,42 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:maxHeight="40dp"
+                        android:layout_marginLeft="10dp"
                         android:tint="@color/colorPrimaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/buttonSendAnswer"
+                        app:srcCompat="@drawable/question" />
+
+                    <Button
+                        android:id="@+id/buttonSendAnswer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:paddingLeft="40dp"
+                        android:paddingRight="40dp"
+                        android:text="Отправить ответ"
+                        android:textColor="@color/white"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/skip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="40dp"
+                        android:tint="@color/colorPrimaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/buttonSendAnswer"
-                        app:srcCompat="@drawable/question" />
+                        app:srcCompat="@drawable/hint" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
                 <TextView

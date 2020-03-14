@@ -35,7 +35,7 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
     //private static MyClickListener clickListener;
     private ArrayList<ContentAnswer> contents;
      private Context context;
-     public boolean deleted, send;
+     //public boolean deleted, send;
 
 
     public AdapterAnswer(ArrayList<ContentAnswer> contents, Context context) {
@@ -93,12 +93,12 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
                 message.isChecked=true;
                 message.text=message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, false, 0);
                 databaseReference = databaseFD.getReference("Message");
-                if(!send){
+                if(!contents.get(i).send){
                 databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
-                        send=true;
+                        contents.get(i).send=true;
                         userCurrent.forCheking.remove(i);
                         databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
                         databaseReference.child(contents.get(i).key).removeValue();
@@ -119,7 +119,7 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
             @Override
             public void onClick(View view) {
 
-                deleted = false;
+                contents.get(i).deleted = false;
                 databaseReference = databaseFD.getReference("Rating");
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -128,12 +128,13 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
 
                             for (DataSnapshot issue : dataSnapshot.getChildren()) {
                                 Rating currRating = issue.getValue(Rating.class);
-                                if(currRating!=null&&!deleted){
-                                    if(currRating.keyQuest.equals(contents.get(i).keyQuest)&&currRating.keyUser.equals(contents.get(i).keyUser)){
+                                if(currRating!=null){
+                                    if(contents.size()!=0){
+                                    if(!contents.get(i).deleted&&currRating.keyQuest.equals(contents.get(i).keyQuest)&&currRating.keyUser.equals(contents.get(i).keyUser)){
                                         databaseReference = databaseFD.getReference("Rating");
                                         databaseReference.child(issue.getKey()).child("points").setValue(currRating.points+contents.get(i).points);
                                         break;
-                                    }
+                                    }}
                                 }
 
                             }
@@ -156,13 +157,14 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
                 message.isChecked=true;
                 message.text=message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, true, contents.get(i).points);
                 databaseReference = databaseFD.getReference("Message");
-                if(!send){
+                if(!contents.get(i).send){
                     databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
-                            send=true;
-                            deleted=true;
+                            if(contents.size()!=0){
+                            contents.get(i).send=true;
+                            contents.get(i).deleted=true;
                                 userCurrent.forCheking.remove(i);
                                 databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
                                 databaseReference = databaseFD.getReference("Answer");
@@ -173,6 +175,7 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
                                 if(contents.size()==0){
                                     ForCheckFragment.previewText.setVisibility(View.VISIBLE);
                                 }
+                            }
                         }
                     });}
 

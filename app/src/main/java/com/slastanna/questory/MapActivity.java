@@ -81,8 +81,6 @@ public class MapActivity extends AppCompatActivity implements
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
     public static boolean hiddenadress;
-    public static boolean getGPS;
-    static boolean gotGPS;
     static int k=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

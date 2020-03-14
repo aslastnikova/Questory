@@ -46,6 +46,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -68,8 +70,8 @@ import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 import static com.slastanna.questory.EmailPasswordActivity.databaseReference;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrent;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrentKey;
-import static com.slastanna.questory.MapActivity.getGPS;
-import static com.slastanna.questory.MapActivity.gotGPS;
+//import static com.slastanna.questory.MapActivity.getGPS;
+//import static com.slastanna.questory.MapActivity.gotGPS;
 import static com.slastanna.questory.MapActivity.hiddenadress;
 import static com.slastanna.questory.MapActivity.markerCoordinates;
 import static com.slastanna.questory.MapActivity.markerCoordinatesDone;
@@ -94,11 +96,13 @@ public class TaskActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 0;
     Button takephoto;
     Button gallery;
+    ImageView skip;
     ImageView photopicker, hint;
     Bitmap answerPicture;
     AlertDialog dialog;
      Answer userAnswer;
-    boolean sendEnable, hint_taken;
+    boolean sendEnable;
+    public static boolean hint_taken;
     LinearLayout parent;
     public static boolean gpsAnswer;
     String currentPhotoPath;
@@ -107,16 +111,17 @@ public class TaskActivity extends AppCompatActivity {
     Context context;
     Activity activity;
     boolean endedQuest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
         activity=this;
-        if(gotGPS){
-            if(gpsAnswer){isitEnd();
-            }
-
-        }
+//        if(gotGPS){
+//            if(gpsAnswer){isitEnd();
+//            }
+//
+//        }
         drawerLayout = (DrawerLayout)getLayoutInflater().inflate(R.layout.drawer_layout_for_activities, null);
         setContentView(drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -135,7 +140,7 @@ public class TaskActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getGPS=false;
+                //getGPS=false;
                 fab.setEnabled(false);
                 Intent intent = new Intent(TaskActivity.this, MapActivity.class);
                 startActivity(intent);
@@ -153,6 +158,7 @@ public class TaskActivity extends AppCompatActivity {
         answer=findViewById(R.id.editTextAnswer);
         sendAnswer = findViewById(R.id.buttonSendAnswer);
         hint=findViewById(R.id.hint);
+        skip=findViewById(R.id.skip);
 
 
 
@@ -172,13 +178,16 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
-        markerCoordinates.clear();
-        markerCoordinatesDone.clear();
+        updateRating();
+        //markerCoordinates.clear();
+        //markerCoordinatesDone.clear();
         return true;
     }
 
 
     public void setTask(String key){
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         databaseReference=databaseFD.getReference("Task");
 
         Query query= databaseReference.orderByKey().equalTo(key);
@@ -193,6 +202,8 @@ public class TaskActivity extends AppCompatActivity {
                          currentTask=issue.getValue(Task.class);
 
                         if(currentTask!=null){
+                            if(currentAttempts==0){
+                            currentAttempts = currentTask.attempts;}
                             fillText(currentTask);
 
                            // answer.setVisibility(View.VISIBLE);
@@ -223,10 +234,11 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     void fillText(final Task task) {
+        hideSoftKeyboard(answer);
         setTextifnotnull(task.address, address);
         setTextifnotnull(task.taskHeading, header);
         setTextifnotnull(task.taskText, text);
-        currentAttempts=task.attempts;
+        if(currentAttempts==0){currentAttempts=task.attempts;}
         gpsAnswer=false;
         attempts.setText("Осталось попыток: " + currentAttempts);
         if (!(task.tpicture==null || task.tpicture.equals("")||task.tpicture.equals("picture"))) {
@@ -259,6 +271,20 @@ public class TaskActivity extends AppCompatActivity {
             });
         }else{hint.setVisibility(View.GONE);}
 
+
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TaskActivity.this);
+                builder.setTitle("Хотите пропустить задание? Вы не получите за него баллы.");
+                builder.setPositiveButton("Да", (a, b) -> {
+                    isitEnd();
+                });
+                builder.setNegativeButton("Нет", (a, b) ->{});
+                builder.show();
+            }
+        });
+
         if(task.typeTask!=null){
             userAnswer = new Answer();
             userAnswer.userKey=userCurrentKey;
@@ -267,7 +293,9 @@ public class TaskActivity extends AppCompatActivity {
             switch (task.typeTask){
                 case "text":
                     answer.setVisibility(View.VISIBLE);
-                    attempts.setVisibility(View.VISIBLE);
+                    if(currentTask.forAdmin){
+                    attempts.setVisibility(View.GONE);}else{attempts.setVisibility(View.VISIBLE);}
+                    sendAnswer.setText("Отправить ответ");
                     sendAnswer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -288,6 +316,14 @@ public class TaskActivity extends AppCompatActivity {
                                                 Toast.makeText(TaskActivity.this, "Попробуйте ещё раз" ,Toast.LENGTH_SHORT).show();
                                                 answer.setText("");
                                                 currentAttempts--;
+                                                if(currentTask.hintPoints>=currentAttempts){
+                                                    hint.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            Toast.makeText(TaskActivity.this, "У вас недостаточно баллов, чтобы получить подсказку" ,Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                }
                                                 attempts.setText("Осталось попыток: " + currentAttempts); }
                                             else{
                                                 Toast.makeText(TaskActivity.this, "К сожалению, попытки закончились. Вы не получите баллы за это задание." ,Toast.LENGTH_SHORT).show();
@@ -309,6 +345,7 @@ public class TaskActivity extends AppCompatActivity {
                 case "photo":
                     attempts.setVisibility(View.GONE);
                     answer.setVisibility(View.GONE);
+                    sendAnswer.setText("Отправить ответ");
                     sendAnswer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -381,7 +418,7 @@ public class TaskActivity extends AppCompatActivity {
                     sendAnswer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            getGPS=true;
+                            //getGPS=true;
                             MyLocationListener.SetUpLocationListener(context, activity);
                             double lat =MyLocationListener.getLat();
                             double lon = MyLocationListener.getLong();
@@ -405,7 +442,10 @@ public class TaskActivity extends AppCompatActivity {
 
 
     }
-
+    protected void hideSoftKeyboard(EditText input) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+    }
 
     public static boolean isNear(double lat, double lon, int radius){
         Log.d("MyTag", "LatSTD: "+mToDegreesLat(radius));
@@ -484,23 +524,26 @@ public class TaskActivity extends AppCompatActivity {
         if(answer!=null){
         answer.setText("");}
         if(tasks.size()>i+1){
-            if(!gotGPS){ updateRating();}
+            //if(!gotGPS){
+            updateRating();//}
             i++;
             if(currentTask.taskComment!=null&&!currentTask.taskComment.equals("")){
             showPopupWindow(parent, "<b>Примечание автора:</b> "+currentTask.taskComment, true);}
             markerCoordinatesDone.add(Feature.fromGeometry(
                     Point.fromLngLat( currentTask.longitude, currentTask.latitude)));
             hint_taken=false;
-            gotGPS=false;
+            //gotGPS=false;
             gpsAnswer=false;
             setTask(tasks.get(i));
 
         }else{
 
-            if(!gotGPS){ updateRating();}
+            //if(!gotGPS){
+            updateRating();
+            //}
             endedQuest=true;
             hint_taken=false;
-            gotGPS=false;
+            //gotGPS=false;
             gpsAnswer=false;
             if(!userCurrent.endedQuests.contains(currentQuestkey)){
                 userCurrent.endedQuests.add(currentQuestkey);
@@ -559,7 +602,7 @@ public class TaskActivity extends AppCompatActivity {
     void setTextifnotnull(String s, TextView t){
         if(!(s.equals(null)||s.equals(""))){
             t.setText(s);
-        }
+        }else{t.setText("");}
     }
 
     //перевод изображения в строку
@@ -580,13 +623,27 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("MyTag", "Destroyed");
         updateRating();
         //TODO проверь меня
-        if(!gotGPS){
+        //if(!gotGPS){
             markerCoordinates.clear();
             markerCoordinatesDone.clear();
-            finish();}
+            finish();//}
         i=0;
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        Log.d("MyTag", "Stopped");
+        updateRating();
+//        if(!gotGPS){
+//            markerCoordinates.clear();
+//            markerCoordinatesDone.clear();
+//            finish();}
+        // insert here your instructions
     }
 
     void updateRating(){
@@ -594,9 +651,11 @@ public class TaskActivity extends AppCompatActivity {
         rating.keyUser=userCurrentKey;
         rating.keyQuest=currentQuestkey;
         rating.attemptsOnLastTask=currentAttempts;
-        rating.lastTaskKey=tasks.get(i);
+        if(tasks.size()!=0){
+        rating.lastTaskKey=tasks.get(i);}
         rating.points=currentPoints;
         rating.dateStart=dateStart;
+        rating.hintTaken=hint_taken;
         if(tasks.size()==i+1){
         Calendar cal = Calendar.getInstance();
         rating.dateEnd=fullQuestActivity.calendar_to_String(cal);}
@@ -614,8 +673,9 @@ public class TaskActivity extends AppCompatActivity {
         }
         else{
             markerCoordinates.clear();
+            if(currentTask!=null){
             markerCoordinates.add(Feature.fromGeometry(
-                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));
+                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));}
             coordinates=markerCoordinates;}
         if(!coordinates.isEmpty()){
         rating.coordinates= FeatureCollection.fromFeatures(coordinates).toJson();
@@ -790,7 +850,7 @@ public class TaskActivity extends AppCompatActivity {
         // Continue only if the File was successfully created
         if (photoFile != null) {
             Uri photoURI = FileProvider.getUriForFile(this,
-                    "com.example.android.fileprovider",
+                    "com.slastanna.android.fileprovider",
                     photoFile);
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);

@@ -53,5 +53,6 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.pnikosis:materialish-progress:1.7'
     implementation'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
 
 }

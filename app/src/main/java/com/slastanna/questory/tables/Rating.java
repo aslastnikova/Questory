@@ -11,6 +11,6 @@ public class Rating {
     public String dateStart, dateEnd;
     public int attemptsOnLastTask;
     public int points;
-    public boolean ended;
+    public boolean ended, hintTaken;
     public Rating(){}
 }

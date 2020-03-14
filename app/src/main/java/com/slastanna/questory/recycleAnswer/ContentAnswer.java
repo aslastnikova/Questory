@@ -7,6 +7,7 @@ public class ContentAnswer {
         public  String key;
         public String keyQuest, keyUser, nameQuest, nameTask;
         public int points;
+        public boolean deleted, send;
 
         public ContentAnswer(){}
 

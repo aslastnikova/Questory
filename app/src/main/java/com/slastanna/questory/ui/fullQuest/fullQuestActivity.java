@@ -95,6 +95,8 @@ public class fullQuestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 fab.setEnabled(false);
+                markerCoordinates.clear();
+                markerCoordinatesDone.clear();
                 TaskActivity.tasks=currentQuest.tasks;
 
                 if(userCurrent.activeQuests.contains(currentQuestkey)){
@@ -117,7 +119,7 @@ public class fullQuestActivity extends AppCompatActivity {
                                             ratingKey=issue.getKey();
                                             TaskActivity.currentAttempts=currentRating.attemptsOnLastTask;
                                             TaskActivity.currentPoints=currentRating.points;
-
+                                            TaskActivity.hint_taken=currentRating.hintTaken;
                                             if(currentQuest.tasks.contains(currentRating.lastTaskKey)){
                                                 int j = currentQuest.tasks.indexOf(currentRating.lastTaskKey);
                                                 databaseReference=databaseFD.getReference("Task");

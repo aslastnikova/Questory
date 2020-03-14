@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseFD = FirebaseDatabase.getInstance();
         databaseReference=databaseFD.getReference("User");
+        if(userCurrentKey!=null){
         databaseReference.child(userCurrentKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });}
 
 
 

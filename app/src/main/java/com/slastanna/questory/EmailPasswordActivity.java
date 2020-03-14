@@ -15,7 +15,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.slastanna.questory.Services.NotificationService;
 import com.slastanna.questory.tables.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,6 +44,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -160,7 +166,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
 
     public void registrationClick(){
         registration=true;
-        setContentView(R.layout.activity_firebase_ui_registration);
+        setContentView(R.layout.activity_firebase_ui_registration2);
         userCurrent=new User();
         ETemail = (EditText) findViewById(R.id.editEmail);
         ETpassword = (EditText) findViewById(R.id.editPassword);
@@ -168,11 +174,37 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         ETsurname= (EditText) findViewById(R.id.editSurname);
         ETname= (EditText) findViewById(R.id.editNameReal);
         avatar=findViewById(R.id.avatarchoose);
+        ETpassword.setCameraDistance(100);
+        KeyboardVisibilityEvent.setEventListener(
+                this,
+                new KeyboardVisibilityEventListener() {
+                    @Override
+                    public void onVisibilityChanged(boolean isOpen) {
+                        if(isOpen){
+                            findViewById(R.id.linhidden).setVisibility(View.VISIBLE);
+                        }else{findViewById(R.id.linhidden).setVisibility(View.GONE);}
+                    }
+                });
+
+        ETpassword.setOnKeyListener(new View.OnKeyListener() {
+               public boolean onKey(View v, int keyCode, KeyEvent event)
+               {
+                   Log.d("MyTag", "keycode: "+keyCode);
+                   Log.d("MyTag", "keyevent: "+event);
+                   if (event.getAction() == KeyEvent.ACTION_DOWN)
+                       if ((keyCode == KeyEvent.KEYCODE_ENTER))
+                       {    // Это событие не наступает
+
+                       }else{}
+                   return true;
+               }
+           }
+        );
+
         privacy=findViewById(R.id.privacypolicy1);
         privacy.setText(Html.fromHtml("<a href=https://drive.google.com/file/d/1Z1r2_SqR2YRdbQfbeWbYYMW4Xs-kXmAT/view?usp=sharing><font color=#FFFFFF>Вы даете свое согласие на обработку персональных данных</font></a>"));
         privacy.setLinksClickable(true);
         privacy.setLinkTextColor(Color.WHITE);
-
         privacy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -287,7 +319,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
         date_int[2]= cal.get(Calendar.YEAR);
-        date_int[1]= cal.get(Calendar.MONTH+1);
+        date_int[1]= cal.get(Calendar.MONTH)+1;
         date_int[0]= cal.get(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < 2; i++) {
             if(date_int[i]<10){
@@ -387,6 +419,9 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                                     if(userCurrent!=null){
                                         if(wasAlreadySigned){
                                             userCurrentKey=issue.getKey();
+                                            editor.putString("userKey", userCurrentKey);
+                                            editor.commit();
+                                            //startService(new Intent(EmailPasswordActivity.this, NotificationService.class));
                                             Intent intent = new Intent(EmailPasswordActivity.this, MainActivity.class);
                                             startActivity(intent); finish();
                                         }else{
@@ -398,9 +433,14 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
 
                                             editor.putString("email", userCurrent.email);
                                             editor.putString("password", userCurrent.password);
+
                                             editor.commit();
                                         }
                                         userCurrentKey=issue.getKey();
+                                        editor.putString("userKey", userCurrentKey);
+                                        editor.commit();
+                                        //startService(new Intent(EmailPasswordActivity.this, NotificationService.class));
+
                                         Intent intent = new Intent(EmailPasswordActivity.this, MainActivity.class);
                                         startActivity(intent); finish();}
                                         break;
@@ -420,6 +460,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                                 SharedPreferences.Editor editor = myPref.edit();
                                 editor.putString("email", null);
                                 editor.putString("password", null);
+                                editor.putString("userKey", null);
                                 editor.commit();
                             }
                             enteranceClick();
@@ -437,6 +478,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                     SharedPreferences.Editor editor = myPref.edit();
                     editor.putString("email", null);
                     editor.putString("password", null);
+                    editor.putString("userKey", null);
                     editor.commit();
                     enteranceClick();
                 }
@@ -461,6 +503,9 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
     //регистрация аккаунта
     public void registration (final String username, final String email , final String password, String firstname, String surname, String date){
         Date curdate = new Date();
+        //Calendar calendar = Calendar.getInstance().get(Calendar.YEAR);;
+
+        Log.d("Mytag", "calendar= "+Calendar.getInstance().get(Calendar.YEAR));
         CheckBox pp=findViewById(R.id.privacypolicy);
         if(email.equals("guest"))
         {   btnSignIn.setProgress(-1);
@@ -495,10 +540,17 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
             btnSignIn.setProgress(-1);
             btnSignIn.setText("Попробывать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите почту", Toast.LENGTH_SHORT).show();
-        }else if(!date.equals("Дата рождения")&&(curdate.getYear()-Integer.parseInt(date.substring(6)))<13){
+        }else if(!date.equals("Дата рождения")&&(Calendar.getInstance().get(Calendar.YEAR)-Integer.parseInt(date.substring(6)))<13){
+            btnSignIn.setProgress(-1);
+            btnSignIn.setText("Попробывать еще раз");
+            Log.d("Mytag", "curdate= "+Calendar.getInstance().get(Calendar.YEAR));
+            Log.d("Mytag", "datesubstring= "+Integer.parseInt(date.substring(6)));
+            Log.d("Mytag", "result= "+(curdate.getYear()-Integer.parseInt(date.substring(6))));
             Toast.makeText(EmailPasswordActivity.this, "Извините, но вы слишком молоды", Toast.LENGTH_SHORT).show();
         }
         else if(!pp.isChecked()){
+            btnSignIn.setProgress(-1);
+            btnSignIn.setText("Попробывать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, дайте согласие на обработку персональнх данных", Toast.LENGTH_SHORT).show();
         }
         else{
@@ -525,6 +577,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                                 SharedPreferences.Editor editor = myPref.edit();
                                 editor.putString("email", email);
                                 editor.putString("password", password);
+                                editor.putString("userKey", databaseReference.getKey());
                                 editor.commit();
                             }
                             verify_email(firebaseUser);
