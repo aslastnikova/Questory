@@ -13,7 +13,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Parcelable;
+import android.renderscript.ScriptGroup;
 import android.text.Html;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -170,6 +172,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         userCurrent=new User();
         ETemail = (EditText) findViewById(R.id.editEmail);
         ETpassword = (EditText) findViewById(R.id.editPassword);
+        ETpassword.setInputType(InputType.TYPE_TEXT_VARIATION_PHONETIC);
         ETnickname = (EditText) findViewById(R.id.editName);
         ETsurname= (EditText) findViewById(R.id.editSurname);
         ETname= (EditText) findViewById(R.id.editNameReal);
