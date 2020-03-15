@@ -468,7 +468,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                             }
                             enteranceClick();
                             btnSignIn.setProgress(-1);
-                            btnSignIn.setText("Попробывать еще раз");
+                            btnSignIn.setText("Попробовать еще раз");
                             Toast.makeText(EmailPasswordActivity.this, "Неправильный email или пароль. Вы не авториованы", Toast.LENGTH_SHORT).show();
                         }
                     });}else{
@@ -495,7 +495,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                 if(btnSignIn!=null) {
 
                     btnSignIn.setProgress(-1);
-                    btnSignIn.setText("Попробывать еще раз");
+                    btnSignIn.setText("Попробовать еще раз");
 
                 }else if(tries<5){
                     tries++;
@@ -512,20 +512,20 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         CheckBox pp=findViewById(R.id.privacypolicy);
         if(email.equals("guest"))
         {   btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, выберите другой никнейм", Toast.LENGTH_SHORT).show();
         }
         else if (password.equals(""))
         {   btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите пароль", Toast.LENGTH_SHORT).show();
         }else if (password.length()<6)
         {   btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пароль слишком короткий", Toast.LENGTH_SHORT).show();
         }else if(userCurrent.avatar.equals(null)||userCurrent.avatar.equals("")){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, выберите аватар", Toast.LENGTH_SHORT).show();
         }else if(username.length()<6){
             btnSignIn.setProgress(-1);
@@ -533,19 +533,19 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
             Toast.makeText(EmailPasswordActivity.this, "Никнейм должен быть длиннее 6 символов", Toast.LENGTH_SHORT).show();
         }else if(firstname.equals("")){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите имя", Toast.LENGTH_SHORT).show();
         }else if(surname.equals("")){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите фамилию", Toast.LENGTH_SHORT).show();
         }else if(email.equals("")){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите почту", Toast.LENGTH_SHORT).show();
         }else if(!date.equals("Дата рождения")&&(Calendar.getInstance().get(Calendar.YEAR)-Integer.parseInt(date.substring(6)))<13){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Log.d("Mytag", "curdate= "+Calendar.getInstance().get(Calendar.YEAR));
             Log.d("Mytag", "datesubstring= "+Integer.parseInt(date.substring(6)));
             Log.d("Mytag", "result= "+(curdate.getYear()-Integer.parseInt(date.substring(6))));
@@ -553,7 +553,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         }
         else if(!pp.isChecked()){
             btnSignIn.setProgress(-1);
-            btnSignIn.setText("Попробывать еще раз");
+            btnSignIn.setText("Попробовать еще раз");
             Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, дайте согласие на обработку персональнх данных", Toast.LENGTH_SHORT).show();
         }
         else{
@@ -592,7 +592,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                 }
                 else{
                     btnSignIn.setProgress(-1);
-                    btnSignIn.setText("Попробывать еще раз");
+                    btnSignIn.setText("Попробовать еще раз");
                     Toast.makeText(EmailPasswordActivity.this, "Ошибка соединения. Регистрация провалена", Toast.LENGTH_SHORT).show();
                 Log.d("MyTag", "Error: "+ task.getException());}
             }

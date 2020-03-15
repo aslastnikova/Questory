@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.slastanna.questory.R;
 import com.slastanna.questory.tables.MyMessage;
 import com.slastanna.questory.tables.Rating;
@@ -63,6 +64,9 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
         Log.d("MyTag", "8");
         return new Holder(layout);
     }
+    public static void makeVisible(int i){
+
+    }
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int i) {
@@ -75,8 +79,7 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
         holder.ans.setText(contents.get(i).getAnswer());}else{
             holder.ans.setVisibility(View.GONE);
             Bitmap img = decodeBase64(contents.get(i).getAnswer());
-            Glide.with(context).load(img).into(holder.img);
-            //holder.img.setImageBitmap(img);
+            Glide.with(context).load(img).placeholder(R.drawable.question).apply(new RequestOptions().override(450)).into(holder.img);
         }
         databaseReference = databaseFD.getReference("Answer");
 
@@ -187,129 +190,6 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
         });
 
 
-
-
-
-//        holder.rightans.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                deleted = false;
-//                databaseReference = databaseFD.getReference("Rating");
-//                databaseReference.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//
-//                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
-//                                Rating currRating = issue.getValue(Rating.class);
-//                                if(currRating!=null&&!deleted){
-//                                if(currRating.keyQuest.equals(contents.get(i).keyQuest)&&currRating.keyUser.equals(contents.get(i).keyUser)){
-//                                    databaseReference = databaseFD.getReference("Rating");
-//                                     databaseReference.child(issue.getKey()).child("points").setValue(currRating.points+contents.get(i).points);
-//
-//
-//
-//
-//                                    MyMessage message = new MyMessage();
-//                                    //message.requesterKey=userCurrentKey;
-//                                    message.requestedKey=contents.get(i).keyUser;
-//                                    message.requestedName=contents.get(i).name;
-//                                    message.isChecked=true;
-//                                    message.text=message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, true, contents.get(i).points);
-//                                    databaseReference = databaseFD.getReference("Message");
-//                                    if(!send){
-//                                    databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
-//                                        @Override
-//                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                                            //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
-//                                            send=true;
-//                                            if(!deleted){
-//
-//                                            deleted =true;
-//                                            userCurrent.forCheking.remove(i);
-//                                            databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
-//                                            databaseReference = databaseFD.getReference("Answer");
-//                                            databaseReference.child(contents.get(i).key).removeValue();
-//                                            contents.remove(i);
-//                                            notifyItemRemoved(i);
-//                                            notifyDataSetChanged();
-//                                            if(contents.size()==0){
-//                                                ForCheckFragment.previewText.setVisibility(View.VISIBLE);
-//                                            }}
-//                                        }
-//                                    });}
-//
-//                                    //notifyItemRemoved(i);
-//                                    //notifyDataSetChanged();
-//
-//
-//                                 }
-//                            }
-//
-//                            }
-//
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//            }
-//        });
-
-
-//        holder.rightans.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                deleted = false;
-//                databaseReference = databaseFD.getReference("Rating");
-//                databaseReference.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//
-//                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
-//                                Rating currRating = issue.getValue(Rating.class);
-//                                if(currRating!=null&&!deleted){
-//                                    if(currRating.keyQuest.equals(contents.get(i).keyQuest)&&currRating.keyUser.equals(contents.get(i).keyUser)){
-//                                        deleted =true;
-//                                        databaseReference.child(issue.getKey()).child("points").setValue(currRating.points+contents.get(i).points);
-//                                        userCurrent.forCheking.remove(i);
-//                                        databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
-//                                        databaseReference = databaseFD.getReference("Answer");
-//                                        databaseReference.child(contents.get(i).key).removeValue();
-//                                        contents.remove(i);
-//                                        if(contents.size()==0){
-//                                            ForCheckFragment.previewText.setVisibility(View.VISIBLE);
-//                                        }
-//                                        notifyItemRemoved(i);
-//                                        notifyDataSetChanged();
-//
-//
-//                                    }
-//                                }
-//
-//                            }
-//
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//            }
-//        });
-
     }
 
 
@@ -353,14 +233,7 @@ class Holder extends RecyclerView.ViewHolder implements  View.OnClickListener {
 
 }
 
-//    public void setOnItemClickListener(MyClickListener clickListener) {
-//        AdapterFriends.clickListener = clickListener;
-//    }
 
-//public interface MyClickListener {
-//    void onItemClick(int position, View v);
-//
-//}
 
 
 }
