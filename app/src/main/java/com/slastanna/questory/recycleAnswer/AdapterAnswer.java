@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.slastanna.questory.R;
 import com.slastanna.questory.tables.MyMessage;
 import com.slastanna.questory.tables.Rating;
@@ -74,7 +75,8 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
         holder.ans.setText(contents.get(i).getAnswer());}else{
             holder.ans.setVisibility(View.GONE);
             Bitmap img = decodeBase64(contents.get(i).getAnswer());
-            holder.img.setImageBitmap(img);
+            Glide.with(context).load(img).into(holder.img);
+            //holder.img.setImageBitmap(img);
         }
         databaseReference = databaseFD.getReference("Answer");
 

@@ -50,9 +50,9 @@
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.5"
+
             android:background="@drawable/background_shape_light"
             android:ems="10"
             android:hint="@string/email"
@@ -65,9 +65,8 @@
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.5"
             android:background="@drawable/background_shape_light"
             android:ems="10"
             android:hint="Password"

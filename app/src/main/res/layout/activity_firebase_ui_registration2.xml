@@ -247,7 +247,7 @@
             <LinearLayout
                 android:id="@+id/linhidden"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="220dp"
                 android:orientation="vertical"
                 android:visibility="gone"
                 custom:visibility="gone"></LinearLayout>
