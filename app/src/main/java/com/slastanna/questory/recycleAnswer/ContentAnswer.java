@@ -7,6 +7,9 @@ public class ContentAnswer {
         public  String key;
         public String keyQuest, keyUser, nameQuest, nameTask;
         public int points;
+        public long id;
+        public boolean isshown;
+        public boolean ispicture;
         public boolean deleted, send;
 
         public ContentAnswer(){}
