@@ -49,7 +49,8 @@ public class StartedQuestsFragment extends Fragment {
         rv.setLayoutManager(manager);
         rv.setAdapter(adapter);
         previewText=root.findViewById(R.id.previewText);
-        previewText.setText("У вас нет начатых квестов");
+        if(contentsStart.size()==0){
+        previewText.setText("У вас нет начатых квестов");}
 
         databaseReference = databaseFD.getReference("Quest");
 

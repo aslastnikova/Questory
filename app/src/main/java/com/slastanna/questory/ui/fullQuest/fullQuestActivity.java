@@ -36,6 +36,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 import static com.slastanna.questory.EmailPasswordActivity.databaseReference;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrent;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrentKey;
+import static com.slastanna.questory.MapActivity.context;
 import static com.slastanna.questory.MapActivity.hiddenadress;
 import static com.slastanna.questory.MapActivity.markerCoordinates;
 import static com.slastanna.questory.MapActivity.markerCoordinatesDone;
@@ -206,6 +208,7 @@ public class fullQuestActivity extends AppCompatActivity {
                     });
 
                 }else if(userCurrent.endedQuests.contains(currentQuestkey)){
+                    if(currentQuest.canResetProgress){
                     AlertDialog.Builder builder = new AlertDialog.Builder(fullQuestActivity.this);
                     builder.setTitle("Сбросить прогресс?");
                     builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -265,7 +268,9 @@ public class fullQuestActivity extends AppCompatActivity {
 
                         });
                     builder.show();
-                }
+                }else{
+                        Toast.makeText(fullQuestActivity.this, "Вы не можете пройти этот квест повторно", Toast.LENGTH_SHORT).show();
+                    }}
                 else{
                     newPlayer();
                }

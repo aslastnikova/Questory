@@ -50,7 +50,8 @@ public class EndedQuestsFragment extends Fragment {
         rv.setLayoutManager(manager);
         rv.setAdapter(adapter);
         previewText=root.findViewById(R.id.previewText);
-        previewText.setText("У вас нет завершенных квестов");
+        if(contentsEnd.size()==0){
+        previewText.setText("У вас нет завершенных квестов");}
         // TODO убрать
         databaseReference = databaseFD.getReference("Quest");
 
@@ -69,6 +70,7 @@ public class EndedQuestsFragment extends Fragment {
                             Quest quest = dataSnapshot.getValue(Quest.class);
                             content =new Content(quest.qname, quest.description, quest.qpicture, dataSnapshot.getKey());
                             contentsEnd.add(content);
+                            previewText.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
                     }

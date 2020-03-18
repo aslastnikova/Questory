@@ -1,5 +1,6 @@
 package com.slastanna.questory;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Parcelable;
@@ -56,6 +58,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -96,8 +99,42 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         //setContentView(R.layout.loading_layout);
         context=this;
         FirebaseApp.initializeApp(this);
-        mDecorView = getWindow().getDecorView();
-        onWindowFocusChanged(true);
+
+        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        // This work only for android 4.4+
+        if(currentApiVersion >= Build.VERSION_CODES.KITKAT)
+        {
+
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+
+            // Code below is to handle presses of Volume up or Volume down.
+            // Without this, after pressing volume buttons, the navigation bar will
+            // show up and won't hide
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                        @Override
+                        public void onSystemUiVisibilityChange(int visibility)
+                        {
+                            if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
+                            {
+                                decorView.setSystemUiVisibility(flags);
+                            }
+                        }
+                    });
+        }
+
+
+
+        //mDecorView = getWindow().getDecorView();
+        //onWindowFocusChanged(true);
         mAuth = FirebaseAuth.getInstance();
         databaseFD = FirebaseDatabase.getInstance();
         databaseReference = databaseFD.getInstance().getReference();
@@ -352,6 +389,12 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
     }
     public void verifyClick(String email){
         setContentView(R.layout.verify_email);
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enteranceClick();
+            }
+        });
         TextView txt =findViewById(R.id.verify_text);
         txt.setText(getResources().getString(R.string.verify_text)+" "+email);
         findViewById(R.id.verify_button).setOnClickListener(new View.OnClickListener() {
@@ -378,8 +421,10 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                         verifyClick(firebaseUser.getEmail());
 
                     } else {
+                        btnSignIn.setProgress(-1);
+                        btnSignIn.setText("Попробовать еще раз");
                         Log.e("MyTag", "sendEmailVerification: "+task.getException());
-                        Toast.makeText(getApplicationContext(), "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Проблемы с отправкой верификационного письма. Попробуйте позже.", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -522,7 +567,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         }else if (password.length()<6)
         {   btnSignIn.setProgress(-1);
             btnSignIn.setText("Попробовать еще раз");
-            Toast.makeText(EmailPasswordActivity.this, "Пароль слишком короткий", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EmailPasswordActivity.this, "Пароль должен быть 6 и более символов", Toast.LENGTH_SHORT).show();
         }else if(userCurrent.avatar.equals(null)||userCurrent.avatar.equals("")){
             btnSignIn.setProgress(-1);
             btnSignIn.setText("Попробовать еще раз");
@@ -615,19 +660,22 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         return false;
     }
 
+
+
+
     //скрыть ленту навигации
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-    }
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        if (hasFocus) {
+//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//        }
+//    }
     @Override
     public void onBackPressed()
     {

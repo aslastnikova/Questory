@@ -20,6 +20,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.slastanna.questory.R;
 import com.slastanna.questory.recycleQuest.Content;
 import com.slastanna.questory.tables.MyMessage;
@@ -82,10 +84,9 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
     public void onViewRecycled(@NonNull Holder holder) {
         super.onViewRecycled(holder);
         Log.d("MyTag", "recycled: "+holder.name.getText());
+        if(contents.size()>(int)holder.getItemId()){
         if(contents.get((int)holder.getItemId()).ispicture){
-        contents.get((int)holder.getItemId()).isshown=false;}else{
-
-        }
+        contents.get((int)holder.getItemId()).isshown=false;}}
     }
 
     @Override
@@ -179,10 +180,48 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
                                 for (DataSnapshot issue : dataSnapshot.getChildren()) {
                                     Rating currRating = issue.getValue(Rating.class);
                                     if (currRating != null) {
-                                        if (contents.size() != 0) {
-                                            if (!contents.get(i).deleted && currRating.keyQuest.equals(contents.get(i).keyQuest) && currRating.keyUser.equals(contents.get(i).keyUser)) {
+                                        if (contents.size() > i) {
+                                            if (!contents.get(i).deleted && currRating.keyQuest.equals(contents.get(i).keyQuest)
+                                                    && currRating.keyUser.equals(contents.get(i).keyUser)&& !contents.get(i).pointssend) {
+                                                contents.get(i).pointssend=true;
                                                 databaseReference = databaseFD.getReference("Rating");
-                                                databaseReference.child(issue.getKey()).child("points").setValue(currRating.points + contents.get(i).points);
+                                                databaseReference.child(issue.getKey()).child("points").setValue(currRating.points + contents.get(i).points).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            MyMessage message = new MyMessage();
+                                                            //message.requesterKey=userCurrentKey;
+                                                            message.requestedKey = contents.get(i).keyUser;
+                                                            message.requestedName = contents.get(i).name;
+                                                            message.isChecked = true;
+                                                            message.text = message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, true, contents.get(i).points);
+                                                            databaseReference = databaseFD.getReference("Message");
+                                                            if (!contents.get(i).send&&contents.get(i).pointssend) {
+                                                                databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
+                                                                    @Override
+                                                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                                        //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
+                                                                        if (contents.size() != 0) {
+                                                                            contents.get(i).send = true;
+                                                                            contents.get(i).deleted = true;
+                                                                            userCurrent.forCheking.remove(i);
+                                                                            databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
+                                                                            databaseReference = databaseFD.getReference("Answer");
+                                                                            databaseReference.child(contents.get(i).key).removeValue();
+                                                                            contents.remove(i);
+                                                                            notifyItemRemoved(i);
+                                                                            notifyDataSetChanged();
+                                                                            if (contents.size() == 0) {
+                                                                                ForCheckFragment.previewText.setVisibility(View.VISIBLE);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                });
+
                                                 break;
                                             }
                                         }
@@ -201,35 +240,35 @@ public class AdapterAnswer extends RecyclerView.Adapter<AdapterAnswer.Holder> {
                     });
 
 
-                    MyMessage message = new MyMessage();
-                    //message.requesterKey=userCurrentKey;
-                    message.requestedKey = contents.get(i).keyUser;
-                    message.requestedName = contents.get(i).name;
-                    message.isChecked = true;
-                    message.text = message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, true, contents.get(i).points);
-                    databaseReference = databaseFD.getReference("Message");
-                    if (!contents.get(i).send) {
-                        databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
-                                if (contents.size() != 0) {
-                                    contents.get(i).send = true;
-                                    contents.get(i).deleted = true;
-                                    userCurrent.forCheking.remove(i);
-                                    databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
-                                    databaseReference = databaseFD.getReference("Answer");
-                                    databaseReference.child(contents.get(i).key).removeValue();
-                                    contents.remove(i);
-                                    notifyItemRemoved(i);
-                                    notifyDataSetChanged();
-                                    if (contents.size() == 0) {
-                                        ForCheckFragment.previewText.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            }
-                        });
-                    }
+//                    MyMessage message = new MyMessage();
+//                    //message.requesterKey=userCurrentKey;
+//                    message.requestedKey = contents.get(i).keyUser;
+//                    message.requestedName = contents.get(i).name;
+//                    message.isChecked = true;
+//                    message.text = message.makeCheckedMessage(contents.get(i).nameTask, contents.get(i).nameQuest, true, contents.get(i).points);
+//                    databaseReference = databaseFD.getReference("Message");
+//                    if (!contents.get(i).send&&contents.get(i).pointssend) {
+//                        databaseReference.push().setValue(message, new DatabaseReference.CompletionListener() {
+//                            @Override
+//                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                                //Toast.makeText(context, "Ваше приглашение отправлено", Toast.LENGTH_SHORT).show();
+//                                if (contents.size() != 0) {
+//                                    contents.get(i).send = true;
+//                                    contents.get(i).deleted = true;
+//                                    userCurrent.forCheking.remove(i);
+//                                    databaseFD.getReference("User").child(userCurrentKey).child("forCheking").setValue(userCurrent.forCheking);
+//                                    databaseReference = databaseFD.getReference("Answer");
+//                                    databaseReference.child(contents.get(i).key).removeValue();
+//                                    contents.remove(i);
+//                                    notifyItemRemoved(i);
+//                                    notifyDataSetChanged();
+//                                    if (contents.size() == 0) {
+//                                        ForCheckFragment.previewText.setVisibility(View.VISIBLE);
+//                                    }
+//                                }
+//                            }
+//                        });
+//                    }
 
 
                 }

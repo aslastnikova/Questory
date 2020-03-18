@@ -51,7 +51,8 @@ public class MyQuestsFragment extends Fragment {
         rv.setLayoutManager(manager);
         rv.setAdapter(adapterMyQuests);
         previewText=root.findViewById(R.id.previewText);
-        previewText.setText("У вас нет созданных квестов");
+        if (contents.size()==0){
+        previewText.setText("У вас нет созданных квестов");}
         // TODO убрать
         databaseReference = databaseFD.getReference("Quest");
 

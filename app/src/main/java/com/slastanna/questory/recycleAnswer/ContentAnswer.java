@@ -10,7 +10,7 @@ public class ContentAnswer {
         public long id;
         public boolean isshown;
         public boolean ispicture;
-        public boolean deleted, send;
+        public boolean deleted, send, pointssend;
 
         public ContentAnswer(){}
 

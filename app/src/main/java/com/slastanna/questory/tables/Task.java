@@ -13,7 +13,7 @@ public class Task {
     public String taskText;
     public String tpicture;
     public String hint, taskComment;
-    public int taskPoints, hintPoints;
+    public int taskCost, hintPoints;
     public int geoRadius;
     public float longitude, latitude;
     public Task(){}

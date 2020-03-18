@@ -46,7 +46,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -307,7 +306,7 @@ public class TaskActivity extends AppCompatActivity {
                                         if(String.valueOf(answer.getText()).equals(currentTask.rightAnswer)){
                                             //Rating rating = new Rating();
 
-                                            currentPoints+=task.taskPoints-(task.attempts-currentAttempts);
+                                            currentPoints+=task.taskCost -(task.attempts-currentAttempts);
                                             Toast.makeText(TaskActivity.this, "Правильный ответ. Набрано баллов: "+currentPoints ,Toast.LENGTH_SHORT).show();
                                             isitEnd();
                                         }else{
@@ -378,7 +377,7 @@ public class TaskActivity extends AppCompatActivity {
                              if(answerPicture!=null){
                                  //userAnswer=new Answer();
                                  userAnswer.answer=encodeToBase64(answerPicture, Bitmap.CompressFormat.JPEG, 30);
-                                 userAnswer.points=currentTask.attempts;
+                                 userAnswer.points=currentTask.taskCost;
                                  userAnswer.questKey=currentQuestkey;
                                  userAnswer.userKey=userCurrentKey;
                                  userAnswer.userName=userCurrent.username;

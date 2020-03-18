@@ -71,42 +71,17 @@ public class ForCheckFragment extends Fragment {
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         //rv.setOnScrollListener(scrollListener);
-
-        previewText=root.findViewById(R.id.text_forcheck);
+        if(contents.size()==0){
+        previewText=root.findViewById(R.id.text_forcheck);}
         for (int i = 0; i < userCurrent.forCheking.size(); i++) {
             fillContent(userCurrent.forCheking.get(i));
-
         }
         //isLoading = true;
         //loadMore(userCurrent.forCheking.size(), contents.size());
         return root;
     }
 
-//    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-//        @Override
-//        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//            super.onScrolled(recyclerView, dx, dy);
-//            int visibleItemCount = layoutManager.getChildCount();//смотрим сколько элементов на экране
-//            int totalItemCount = layoutManager.getItemCount();//сколько всего элементов
-//            int firstVisibleItems = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();//какая позиция первого элемента
-//
-//            if (!isLoading) {//проверяем, грузим мы что-то или нет, эта переменная должна быть вне класса  OnScrollListener
-//                if (((visibleItemCount+firstVisibleItems) >= totalItemCount)) {
-//                    isLoading = true;//ставим флаг что мы попросили еще элемены
-//                    loadMore(5, contents.size());
-//
-//                }
-//            }
-//        }
-//    };
 
-//    void loadMore(int quantity, int last){
-//        for(int i = 0; i<quantity; i++){
-//            fillContent(userCurrent.forCheking.get(i+last), quantity, last);
-//        }
-//        //adapter.notifyDataSetChanged();
-//
-//    }
 
     void fillContent(String key){
         // TODO убрать
@@ -121,6 +96,7 @@ public class ForCheckFragment extends Fragment {
                 if(!answer.ischeked){
                     try{
                         if(!contentsAdded.contains(key)){
+
                                 contentsAdded.add(key);
                                 ContentAnswer content = new ContentAnswer();
                                 content.nameQuest=answer.questName;
@@ -158,12 +134,12 @@ public class ForCheckFragment extends Fragment {
 
 
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        contents.clear();
-
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        contents.clear();
+//
+//    }
 
 
     // Получить позицию измененного contents
