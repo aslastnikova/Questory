@@ -136,7 +136,7 @@ public class ProfileActivity extends AppCompatActivity {
                         if (dataSnapshot.exists()) {
                             try {
                                 User user = dataSnapshot.getValue(User.class);
-                                if (user != null&&user.username.startsWith(s.toString())) {
+                                if (user != null&&user.username.startsWith(s.toString())&&!user.username.equals(userCurrent)) {
 
                                     ContentFriends content = new ContentFriends();
                                     content.avatar = BitmapFactory.decodeResource(getResources(),

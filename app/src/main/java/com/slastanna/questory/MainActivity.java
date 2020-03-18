@@ -10,7 +10,10 @@ import com.slastanna.questory.tables.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -32,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     public static FloatingActionButton fab;
     public static boolean backitem=false;
     public static Context context_main_activity;
+    TextView usernametv;
+    CircularImageView photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,25 +75,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         updateUserInfo();
 
-        databaseFD = FirebaseDatabase.getInstance();
-        databaseReference=databaseFD.getReference("User");
-        if(userCurrentKey!=null){
-        databaseReference.child(userCurrentKey).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                try{
-                    if(dataSnapshot.getKey().equals(userCurrentKey)){
-                userCurrent=dataSnapshot.getValue(User.class);
-                updateUserInfo();}}catch (Exception e){}
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });}
 
 
+        getUserData();
 
 
         // Passing each menu ID as a set of Ids because each
@@ -106,6 +96,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void getUserData(){
+        databaseFD = FirebaseDatabase.getInstance();
+        databaseReference=databaseFD.getReference("User");
+        if(userCurrentKey!=null){
+            databaseReference.child(userCurrentKey).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    try{
+                        if(dataSnapshot.getKey().equals(userCurrentKey)){
+                            userCurrent=dataSnapshot.getValue(User.class);
+                            updateUserInfo();}}catch (Exception e){}
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });}
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -114,10 +124,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    void updateUserInfo(){
+   public void updateUserInfo(){
         NavigationView navigationView = findViewById(R.id.nav_view);
         View navHeader = navigationView.getHeaderView(0);
         CircularImageView avatar=navHeader.findViewById(R.id.avatar);
+        photo=avatar;
+
         //TODO раскомменть меня
         if(userCurrent!=null){
         if(userCurrent.avatar!=null){
@@ -135,8 +147,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         if(userCurrent.username!=null){
-            TextView usernametv=navHeader.findViewById(R.id.username);
+            usernametv=navHeader.findViewById(R.id.username);
+
             usernametv.setText(userCurrent.username);
+            usernametv.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    Log.d("MyTag", "beforeTextChanged: "+charSequence);
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    Log.d("MyTag", "onTextChanged: "+charSequence);
+                    if(charSequence.toString().equals("Ошибка")){
+                        updateUserInfo();
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    Log.d("MyTag", "onTextChanged: "+editable);
+                }
+            });
         }}
     }
 

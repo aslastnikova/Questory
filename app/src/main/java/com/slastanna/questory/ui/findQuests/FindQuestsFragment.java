@@ -67,10 +67,11 @@ public class FindQuestsFragment extends Fragment {
                 try {
                     Log.d("MyTag", "Data:"+dataSnapshot);
                     Quest quest = dataSnapshot.getValue(Quest.class);
+                    if(quest.verified){
                     content =new Content(quest.qname, quest.description, quest.qpicture, dataSnapshot.getKey());
                     contents.add(content);
                     root.findViewById(R.id.progress_wheel).setVisibility(View.GONE);
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();}
                 }catch(Exception e){Log.d("MyTag", "Data:"+e);}
 
             }

@@ -345,56 +345,60 @@ public class fullQuestActivity extends AppCompatActivity {
     }
 
     void newPlayer(){
-        userCurrent.activeQuests.add(currentQuestkey);
-        databaseFD.getReference("User").child(userCurrentKey).child("activeQuests").setValue(userCurrent.activeQuests);
-        Rating rating = new Rating();
-        rating.keyUser=userCurrentKey;
-        rating.keyQuest=currentQuestkey;
-        rating.lastTaskKey=currentQuest.tasks.get(0);
-        rating.points=0;
+        if(currentQuest.tasks.size()!=0) {
+            userCurrent.activeQuests.add(currentQuestkey);
+            databaseFD.getReference("User").child(userCurrentKey).child("activeQuests").setValue(userCurrent.activeQuests);
+            Rating rating = new Rating();
+            rating.keyUser = userCurrentKey;
+            rating.keyQuest = currentQuestkey;
 
-        databaseReference=databaseFD.getReference("Task");
+            rating.lastTaskKey = currentQuest.tasks.get(0);
+            rating.points = 0;
 
-        Query query= databaseReference.orderByKey().equalTo(currentQuest.tasks.get(0));
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                        if(issue!=null){
-                            Task task = issue.getValue(Task.class);
-                            rating.attemptsOnLastTask=task.attempts;
-                            databaseReference = databaseFD.getReference("Rating");
-                            TaskActivity.currentAttempts=rating.attemptsOnLastTask;
-                            List<Feature>markerCoordinatesTask=new ArrayList<>();
-                            markerCoordinatesTask.add(Feature.fromGeometry(
-                                    Point.fromLngLat( task.longitude, task.latitude)));
-                            rating.coordinates= FeatureCollection.fromFeatures(markerCoordinatesTask).toJson();
+            databaseReference = databaseFD.getReference("Task");
 
-                            Calendar cal = Calendar.getInstance();
-                            rating.dateStart=calendar_to_String(cal);
-                            TaskActivity.dateStart=calendar_to_String(cal);
-                            if(!task.hiddenAddress){
-                            markerCoordinates.add(markerCoordinatesTask.get(0));}
-                            databaseReference.push().setValue(rating, new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    ratingKey=databaseReference.getKey();
-                                    Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
-                                    startActivity(intent);
-                                    fab.setEnabled(true);
+            Query query = databaseReference.orderByKey().equalTo(currentQuest.tasks.get(0));
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                            if (issue != null) {
+                                Task task = issue.getValue(Task.class);
+                                rating.attemptsOnLastTask = task.attempts;
+                                databaseReference = databaseFD.getReference("Rating");
+                                TaskActivity.currentAttempts = rating.attemptsOnLastTask;
+                                List<Feature> markerCoordinatesTask = new ArrayList<>();
+                                markerCoordinatesTask.add(Feature.fromGeometry(
+                                        Point.fromLngLat(task.longitude, task.latitude)));
+                                rating.coordinates = FeatureCollection.fromFeatures(markerCoordinatesTask).toJson();
+
+                                Calendar cal = Calendar.getInstance();
+                                rating.dateStart = calendar_to_String(cal);
+                                TaskActivity.dateStart = calendar_to_String(cal);
+                                if (!task.hiddenAddress) {
+                                    markerCoordinates.add(markerCoordinatesTask.get(0));
                                 }
-                            });
+                                databaseReference.push().setValue(rating, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        ratingKey = databaseReference.getKey();
+                                        Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
+                                        startActivity(intent);
+                                        fab.setEnabled(true);
+                                    }
+                                });
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     //перевод изображения в строку

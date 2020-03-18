@@ -12,6 +12,7 @@ public class Quest {
     public boolean isprivate;
     public boolean islinear;
     public boolean canResetProgress;
+    public boolean verified;
     public boolean anonymousAnswers;
     public int duration=0; //in minutes
     public float kilomenters=0.f;
