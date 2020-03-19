@@ -55,7 +55,7 @@
 
             android:background="@drawable/background_shape_light"
             android:ems="10"
-            android:hint="@string/email"
+            android:hint="Email"
             android:inputType="textEmailAddress"
             android:minHeight="40dp"
             android:paddingLeft="10dp"

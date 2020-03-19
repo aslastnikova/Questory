@@ -239,6 +239,7 @@ public class TaskActivity extends AppCompatActivity {
         setTextifnotnull(task.taskText, text);
         if(currentAttempts==0){currentAttempts=task.attempts;}
         gpsAnswer=false;
+        skip.setVisibility(View.VISIBLE);
         attempts.setText("Осталось попыток: " + currentAttempts);
         if (!(task.tpicture==null || task.tpicture.equals("")||task.tpicture.equals("picture"))) {
             image.setVisibility(View.VISIBLE);

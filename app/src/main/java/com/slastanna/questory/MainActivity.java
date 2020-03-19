@@ -1,11 +1,16 @@
 package com.slastanna.questory;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import com.google.firebase.database.Query;
+import com.slastanna.questory.tables.Rating;
 import com.slastanna.questory.tables.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
+import com.slastanna.questory.ui.fullQuest.fullQuestActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -42,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 
 import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 import static com.slastanna.questory.EmailPasswordActivity.databaseReference;
+import static com.slastanna.questory.EmailPasswordActivity.myPref;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrent;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrentKey;
 
@@ -63,28 +70,19 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-
-
-
         fab = findViewById(R.id.fab);
         fab.hide();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         updateUserInfo();
-
-
-
         getUserData();
-
-
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_message, R.id.nav_forcheck, R.id.nav_findquests,
-                R.id.nav_myquests, R.id.nav_startedquests, R.id.nav_endedquests
+                //R.id.nav_myquests,
+                R.id.nav_startedquests, R.id.nav_endedquests
                 //, R.id.nav_share, R.id.nav_send
         )
                 .setDrawerLayout(drawer)
@@ -94,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View navHeader = navigationView.getHeaderView(0);
+        usernametv=navHeader.findViewById(R.id.username);
+        if(usernametv.getText().toString().equals("Ошибка")){
+            getUserData();
+        }
     }
 
     void getUserData(){
@@ -113,7 +122,14 @@ public class MainActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            });}
+            });}else{
+            SharedPreferences.Editor editor = myPref.edit();
+            editor.putString("email", null);
+            editor.putString("password", null);
+            editor.commit();
+            Intent intent = new Intent(MainActivity.this, EmailPasswordActivity.class);
+            startActivity(intent);finish();
+        }
     }
 
     @Override
@@ -127,6 +143,27 @@ public class MainActivity extends AppCompatActivity {
    public void updateUserInfo(){
         NavigationView navigationView = findViewById(R.id.nav_view);
         View navHeader = navigationView.getHeaderView(0);
+
+        navHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Выйти из аккаунта?");
+
+                builder.setNegativeButton("Нет",(a, b) -> fab.setEnabled(true));
+                builder.setPositiveButton("Да",(a, b) -> {
+
+                    SharedPreferences.Editor editor = myPref.edit();
+                    editor.putString("email", null);
+                    editor.putString("password", null);
+                    editor.commit();
+                    Intent intent = new Intent(MainActivity.this, EmailPasswordActivity.class);
+                    startActivity(intent);finish();
+
+                });
+                builder.show();
+            }
+        });
         CircularImageView avatar=navHeader.findViewById(R.id.avatar);
         photo=avatar;
 
@@ -137,38 +174,19 @@ public class MainActivity extends AppCompatActivity {
             Bitmap ava =BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(userCurrent.avatar, "drawable", getPackageName()));
             avatar.setImageBitmap(ava);}
 
-        avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                avatar.setEnabled(false);
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                avatar.setEnabled(true);
-            }
-        });
+//        avatar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                avatar.setEnabled(false);
+//                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+//                startActivity(intent);
+//                avatar.setEnabled(true);
+//            }
+//        });
         if(userCurrent.username!=null){
             usernametv=navHeader.findViewById(R.id.username);
 
             usernametv.setText(userCurrent.username);
-            usernametv.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    Log.d("MyTag", "beforeTextChanged: "+charSequence);
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    Log.d("MyTag", "onTextChanged: "+charSequence);
-                    if(charSequence.toString().equals("Ошибка")){
-                        updateUserInfo();
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    Log.d("MyTag", "onTextChanged: "+editable);
-                }
-            });
         }}
     }
 

@@ -151,7 +151,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
 
         //вход в аккаунт/регистрация пользователя
         if(!(email.length()>0 && password.length()>0)){
-            registrationClick();
+            enteranceClick();
         }
         //Вход переход на навигационное меню
         else{
@@ -434,8 +434,6 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
     public void signin(final String email , final String pass)
     {
 
-
-
         if (email.equals(""))
         {Toast.makeText(EmailPasswordActivity.this, "Пожалуйста, введите имя пользователя", Toast.LENGTH_SHORT).show();}
         else if(pass.equals("")){
@@ -496,7 +494,16 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
 
                                 }
                             }else{
-                                int a=1;
+                                SharedPreferences.Editor editor = myPref.edit();
+                                editor.putString("email", null);
+                                editor.putString("password", null);
+                                editor.putString("userKey", null);
+                                editor.commit();
+                                enteranceClick();
+                                btnSignIn.setProgress(-1);
+                                btnSignIn.setText("Попробовать еще раз");
+                                Toast.makeText(EmailPasswordActivity.this, "Неправильный email или пароль. Вы не авториованы", Toast.LENGTH_SHORT).show();
+
                             }
 
                         }
@@ -504,13 +511,13 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                         @Override
                         public void onCancelled(DatabaseError error) {
 
-                            if(wasAlreadySigned){
+
                                 SharedPreferences.Editor editor = myPref.edit();
                                 editor.putString("email", null);
                                 editor.putString("password", null);
                                 editor.putString("userKey", null);
                                 editor.commit();
-                            }
+
                             enteranceClick();
                             btnSignIn.setProgress(-1);
                             btnSignIn.setText("Попробовать еще раз");

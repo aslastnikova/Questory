@@ -135,7 +135,7 @@
 
                 android:background="@drawable/background_shape_light"
                 android:ems="10"
-                android:hint="Nickname* (минимум 6 символов)"
+                android:hint="Ник* (минимум 6 символов)"
                 android:inputType="textPersonName"
                 android:minHeight="40dp"
                 android:paddingLeft="10dp"
@@ -172,7 +172,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/background_shape_light"
                 android:ems="10"
-                android:hint="Password*"
+                android:hint="Пароль*"
                 android:minHeight="40dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

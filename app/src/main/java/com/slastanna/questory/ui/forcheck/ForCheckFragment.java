@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,20 +37,21 @@ import static com.slastanna.questory.EmailPasswordActivity.userCurrentKey;
 public class ForCheckFragment extends Fragment {
 
 
-    RecyclerView rv;
-    RecyclerView.LayoutManager layoutManager;
-    AdapterAnswer adapter;
+    public static RecyclerView rv;
+    public static RecyclerView.LayoutManager layoutManager;
+    public static AdapterAnswer adapter;
     boolean isLoading;
     public static Activity activity;
     public static int layout;
     public static TextView previewText;
     static ArrayList<ContentAnswer> contents = new ArrayList<>();
     static ArrayList<String> contentsAdded = new ArrayList<>();
+    View root;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
 
 
-        View root = inflater.inflate(R.layout.fragment_forcheck, container, false);
+        root = inflater.inflate(R.layout.fragment_forcheck, container, false);
         layout = R.layout.answer;
 
         activity=getActivity();
@@ -71,16 +73,24 @@ public class ForCheckFragment extends Fragment {
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         //rv.setOnScrollListener(scrollListener);
-        if(contents.size()==0){
-        previewText=root.findViewById(R.id.text_forcheck);}
-        for (int i = 0; i < userCurrent.forCheking.size(); i++) {
-            fillContent(userCurrent.forCheking.get(i));
-        }
+        previewText=root.findViewById(R.id.text_forcheck);
         //isLoading = true;
         //loadMore(userCurrent.forCheking.size(), contents.size());
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(contents.size()!=0){
+            previewText.setVisibility(View.GONE);}else{
+            previewText.setVisibility(View.VISIBLE);
+        }
+        if(userCurrent.forCheking.size()>contents.size()){
+        for (int i = contents.size(); i < userCurrent.forCheking.size(); i++) {
+            fillContent(userCurrent.forCheking.get(i));
+        }}
+    }
 
 
     void fillContent(String key){

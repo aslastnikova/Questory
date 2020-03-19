@@ -26,10 +26,10 @@
                 android:id="@+id/nav_findquests"
                 android:icon="@drawable/baseline_search_24"
                 android:title="@string/findquests" />
-            <item
-            android:id="@+id/nav_myquests"
-            android:icon="@drawable/outline_extension_24"
-            android:title="@string/myquests" />
+<!--            <item-->
+<!--            android:id="@+id/nav_myquests"-->
+<!--            android:icon="@drawable/outline_extension_24"-->
+<!--            android:title="@string/myquests" />-->
             <item
                 android:id="@+id/nav_startedquests"
                 android:icon="@drawable/start"

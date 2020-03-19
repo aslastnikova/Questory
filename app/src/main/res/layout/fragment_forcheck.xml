@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="10dp"
-        android:text="У вас нет не проверенных заданий"
+        android:text="У вас нет непроверенных заданий"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"

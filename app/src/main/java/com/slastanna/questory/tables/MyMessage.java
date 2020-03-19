@@ -38,12 +38,21 @@ public class MyMessage {
         String text;
         text="Ваш ответ на задание \""+taskname+"\" квеста \""+questname+"\" проверено.";
         if(iscorrect){
-            text+=" Вам начислено "+points+" баллов.";
+            text+=" Вам начислено "+points+" балл"+points_ending(points)+".";
         }else{
             text+=" К сожалению, ответ неправильный.";
         }
 
         return text;
+    }
+
+    String points_ending(int p){
+        p=p%10;
+        String ans;
+        if(p==1){ans="";}
+        else if(p>=2&&p<=4){ans="a";}
+        else{ans="ов";}
+        return ans;
     }
     public MyMessage(){}
 }

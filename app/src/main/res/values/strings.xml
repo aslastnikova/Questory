@@ -14,14 +14,14 @@
     <string name="menu_share">Поделиться</string>
     <string name="menu_send">Send</string>
 
-    <string name="email">Email*</string>
+    <string name="email">Адрес электронной почты*</string>
     <string name="quests">Квесты</string>
     <string name="findquests">Найти квесты</string>
     <string name="myquests">Мои квесты</string>
     <string name="startedquests">Начатые квесты</string>
     <string name="endedquests">Законченные квесты</string>
     <string name="settings">Настройки</string>
-    <string name="message">Сообщения</string>
+    <string name="message">Уведомления</string>
     <string name="forcheck">Задания на проверку</string>
     <string name="todevelopers">Связаться с разработчиками</string>
     <string name="attemptsmore">Осталось попыток:</string>

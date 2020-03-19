@@ -192,7 +192,7 @@ public class MapActivity extends AppCompatActivity implements
                         .withProperties(PropertyFactory.iconImage("red-marker-image"),
                                 iconAllowOverlap(true),
                                 iconAnchor(Property.ICON_ANCHOR_BOTTOM),
-                                iconSize(0.05f)));
+                                iconSize(0.15f)));
 
             }
         });
