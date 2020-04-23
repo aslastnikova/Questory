@@ -624,7 +624,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
                     userCurrent.surname=surname;
                     userCurrent.birth_date=date;
                     // отправляем данные в Realtime database FB
-                    databaseReference.child("User").push().setValue(userCurrent, new DatabaseReference.CompletionListener() {
+                    databaseFD.getReference("User").push().setValue(userCurrent, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             CheckBox checkBox = findViewById(R.id.remember_me);

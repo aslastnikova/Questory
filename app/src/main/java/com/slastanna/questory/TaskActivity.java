@@ -37,6 +37,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -116,11 +117,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context=this;
         activity=this;
-//        if(gotGPS){
-//            if(gpsAnswer){isitEnd();
-//            }
-//
-//        }
+
         drawerLayout = (DrawerLayout)getLayoutInflater().inflate(R.layout.drawer_layout_for_activities, null);
         setContentView(drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -148,7 +145,19 @@ public class TaskActivity extends AppCompatActivity {
         });
 
 
+        findViewById(R.id.scrollview).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                if(action == MotionEvent.ACTION_DOWN){
+                    fab.setVisibility(View.GONE);
+                }else if(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL){
+                    fab.setVisibility(View.VISIBLE);
+                }
 
+                return false;
+            }
+        });
         header = findViewById(R.id.theader);
         address = findViewById(R.id.taddress);
         text= findViewById(R.id.ttext);

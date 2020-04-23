@@ -3,10 +3,12 @@ package com.slastanna.questory.ui.fullQuest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import com.slastanna.questory.ProgressLine;
 import com.slastanna.questory.R;
 import com.slastanna.questory.TaskActivity;
 import com.slastanna.questory.tables.Quest;
@@ -16,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -83,6 +86,10 @@ public class fullQuestActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+        ArrayList<Integer> steps = new ArrayList<>();
+        steps.add(0); steps.add(1); steps.add(2);
+        ProgressLine progressLine = findViewById(R.id.progressLine);
+        progressLine.setLines(steps);
         qname = findViewById(R.id.qname);
         qdesc = findViewById(R.id.qdecription);
         qduratation = findViewById(R.id.qduratation);
@@ -93,6 +100,7 @@ public class fullQuestActivity extends AppCompatActivity {
         map=findViewById(R.id.mapsign);
         fab = findViewById(R.id.fab);
         fab.setImageResource(R.drawable.baseline_play_arrow_24);
+        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentTranslucent)));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -276,7 +284,19 @@ public class fullQuestActivity extends AppCompatActivity {
                }
             }
         });
+        findViewById(R.id.scroll).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                if(action == MotionEvent.ACTION_DOWN){
+                    fab.setVisibility(View.GONE);
+                }else if(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL){
+                    fab.setVisibility(View.VISIBLE);
+                }
 
+                return false;
+            }
+        });
 
         databaseFD= FirebaseDatabase.getInstance();
         databaseReference=databaseFD.getReference("Quest");
@@ -419,6 +439,7 @@ public class fullQuestActivity extends AppCompatActivity {
     void fillText(Quest quest){
         setTextifnotnull(quest.qname, qname);
         setTextifnotnull(quest.description, qdesc);
+        //qdesc.setText("\"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\"");
         setTextifnotnull(quest.ownerName, qowner);
         if(quest.kilomenters!=0){
             qdistance.setText(""+quest.kilomenters+" км");}else{

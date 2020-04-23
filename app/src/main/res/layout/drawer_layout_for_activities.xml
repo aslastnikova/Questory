@@ -47,13 +47,23 @@
             android:layout_margin="@dimen/fab_margin"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:tint="#ffffff"
-
             android:backgroundTintMode="src_in"
+            android:tint="#ffffff"
             android:tintMode="src_in"
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/filter" />
+
+        <com.slastanna.questory.ProgressLine
+            android:id="@+id/progressLine"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
