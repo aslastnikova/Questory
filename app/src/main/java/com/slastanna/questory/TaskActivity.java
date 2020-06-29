@@ -27,7 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 
 import android.os.Environment;
@@ -64,7 +63,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 import static com.slastanna.questory.EmailPasswordActivity.databaseReference;
@@ -98,6 +96,7 @@ public class TaskActivity extends AppCompatActivity {
     Button gallery;
     ImageView skip;
     ImageView photopicker, hint;
+    ProgressLine progressLine;
     Bitmap answerPicture;
     AlertDialog dialog;
      Answer userAnswer;
@@ -106,11 +105,12 @@ public class TaskActivity extends AppCompatActivity {
     LinearLayout parent;
     public static boolean gpsAnswer;
     String currentPhotoPath;
-    Rating ratingOld;
     DrawerLayout drawerLayout;
     Context context;
     Activity activity;
     boolean endedQuest;
+    public static Rating currentRating;
+    View layoutTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,13 +118,15 @@ public class TaskActivity extends AppCompatActivity {
         context=this;
         activity=this;
 
+
+
         drawerLayout = (DrawerLayout)getLayoutInflater().inflate(R.layout.drawer_layout_for_activities, null);
         setContentView(drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        View layoutTask =  getLayoutInflater().inflate(R.layout.activity_task, null);
+        layoutTask =  getLayoutInflater().inflate(R.layout.activity_task, null);
         parent = (LinearLayout) findViewById(R.id.include);
         View layout = findViewById(R.id.active_layout);
         parent.removeView(layout);
@@ -158,6 +160,8 @@ public class TaskActivity extends AppCompatActivity {
                 return false;
             }
         });
+        progressLine = findViewById(R.id.progressLine);
+
         header = findViewById(R.id.theader);
         address = findViewById(R.id.taddress);
         text= findViewById(R.id.ttext);
@@ -167,8 +171,6 @@ public class TaskActivity extends AppCompatActivity {
         sendAnswer = findViewById(R.id.buttonSendAnswer);
         hint=findViewById(R.id.hint);
         skip=findViewById(R.id.skip);
-
-
 
 
             try {
@@ -182,21 +184,17 @@ public class TaskActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
         updateRating();
-        //markerCoordinates.clear();
-        //markerCoordinatesDone.clear();
+        onBackPressed();
         return true;
     }
 
 
     public void setTask(String key){
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-//        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         databaseReference=databaseFD.getReference("Task");
+
 
         Query query= databaseReference.orderByKey().equalTo(key);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -212,31 +210,31 @@ public class TaskActivity extends AppCompatActivity {
                         if(currentTask!=null){
                             if(currentAttempts==0){
                             currentAttempts = currentTask.attempts;}
-                            fillText(currentTask);
-
-                           // answer.setVisibility(View.VISIBLE);
-                            sendAnswer.setVisibility(View.VISIBLE);
+                            currentRating.progress.get(i).coordinates=Feature.fromGeometry(
+                                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)).toJson();
+                            markerCoordinates.clear();
                             if(!currentTask.hiddenAddress){
                                 hiddenadress=false;
-                            markerCoordinates.clear();
-                            markerCoordinates.add(Feature.fromGeometry(
-                                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));}else {
-                                markerCoordinates.clear();
+                                markerCoordinates.add(Feature.fromJson(currentRating.progress.get(i).coordinates));
+                                currentRating.progress.get(i).mapstate=0;
+                            }else {
                                 hiddenadress=true;
+                                currentRating.progress.get(i).mapstate=1;
                             }
+
+                            updateRating();
+                            fillText(currentTask);
+                            sendAnswer.setVisibility(View.VISIBLE);
+
                             break;
                         }
 
                     }
                 }
-                //Player playerServer = dataSnapshot.getValue(Player.class);
-                // Log.d(Tag, "Value is: " + value);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                // Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
     }
@@ -287,12 +285,25 @@ public class TaskActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TaskActivity.this);
                 builder.setTitle("Хотите пропустить задание? Вы не получите за него баллы.");
                 builder.setPositiveButton("Да", (a, b) -> {
+                    currentRating.progress.get(i).state=1;
                     isitEnd();
                 });
                 builder.setNegativeButton("Нет", (a, b) ->{});
                 builder.show();
             }
         });
+
+
+        //TODO test new progressbar
+        ArrayList<Integer> steps = new ArrayList<>();
+        for (int j = 0; j < currentRating.progress.size(); j++) {
+            steps.add(currentRating.progress.get(j).state);
+        }
+
+        progressLine.setLines(steps);
+        progressLine.invalidate();
+        progressLine.setVisibility(View.VISIBLE);
+
 
         if(task.typeTask!=null){
             userAnswer = new Answer();
@@ -314,9 +325,12 @@ public class TaskActivity extends AppCompatActivity {
                                     if(!currentTask.forAdmin){
                                         Log.d("MyTag", ""+String.valueOf(answer.getText()));
                                         if(String.valueOf(answer.getText()).equals(currentTask.rightAnswer)){
-                                            //Rating rating = new Rating();
 
                                             currentPoints+=task.taskCost -(task.attempts-currentAttempts);
+                                            if(task.attempts-currentAttempts==0){
+                                                currentRating.progress.get(i).state=3;
+                                            }else{
+                                                currentRating.progress.get(i).state=2;}
                                             Toast.makeText(TaskActivity.this, "Правильный ответ. Набрано баллов: "+currentPoints ,Toast.LENGTH_SHORT).show();
                                             isitEnd();
                                         }else{
@@ -336,11 +350,11 @@ public class TaskActivity extends AppCompatActivity {
                                                 attempts.setText("Осталось попыток: " + currentAttempts); }
                                             else{
                                                 Toast.makeText(TaskActivity.this, "К сожалению, попытки закончились. Вы не получите баллы за это задание." ,Toast.LENGTH_SHORT).show();
+                                                currentRating.progress.get(i).state=1;
                                                 isitEnd(); }
                                         }
 
                                     }else{
-                                        //userAnswer=new Answer();
                                         userAnswer.answer=String.valueOf(answer.getText());
                                         userAnswer.questKey=currentQuestkey;
                                         userAnswer.points=currentTask.attempts;
@@ -392,6 +406,7 @@ public class TaskActivity extends AppCompatActivity {
                                  userAnswer.userKey=userCurrentKey;
                                  userAnswer.userName=userCurrent.username;
                                  userAnswer.taskText=currentTask.taskText;
+
                                  sendtoAdmins();
 
                              }
@@ -427,19 +442,19 @@ public class TaskActivity extends AppCompatActivity {
                     sendAnswer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //getGPS=true;
                             MyLocationListener.SetUpLocationListener(context, activity);
                             double lat =MyLocationListener.getLat();
                             double lon = MyLocationListener.getLong();
                             if(lat!=92 && lon!=182){
-                                //lat=currentTask.latitude;
-                                //lon=currentTask.longitude;
                                 int radius;
                                 if(currentTask.geoRadius==0){radius=5;}else{radius=currentTask.geoRadius;}
 
                                 if(isNear(lat, lon, radius)){
-                                    Toast.makeText(context, "Правильно", Toast.LENGTH_SHORT).show(); isitEnd();
-                                }else{Toast.makeText(context, "Неправильно", Toast.LENGTH_SHORT).show();}
+                                    Toast.makeText(context, "Правильно", Toast.LENGTH_SHORT).show();
+                                    currentRating.progress.get(i).state=3;
+                                    isitEnd();
+                                }else{Toast.makeText(context, "Неправильно", Toast.LENGTH_SHORT).show();
+                                }
 
                             }
                         }
@@ -533,26 +548,21 @@ public class TaskActivity extends AppCompatActivity {
         if(answer!=null){
         answer.setText("");}
         if(tasks.size()>i+1){
-            //if(!gotGPS){
-            updateRating();//}
+            currentRating.progress.get(i).mapstate=2;
+            markerCoordinatesDone.add(Feature.fromJson(currentRating.progress.get(i).coordinates));
+            updateRating();
             i++;
             if(currentTask.taskComment!=null&&!currentTask.taskComment.equals("")){
             showPopupWindow(parent, "<b>Примечание автора:</b> "+currentTask.taskComment, true);}
-            markerCoordinatesDone.add(Feature.fromGeometry(
-                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));
             hint_taken=false;
-            //gotGPS=false;
             gpsAnswer=false;
             setTask(tasks.get(i));
 
         }else{
 
-            //if(!gotGPS){
             updateRating();
-            //}
             endedQuest=true;
             hint_taken=false;
-            //gotGPS=false;
             gpsAnswer=false;
             if(!userCurrent.endedQuests.contains(currentQuestkey)){
                 userCurrent.endedQuests.add(currentQuestkey);
@@ -570,8 +580,6 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     void sendtoAdmins(){
-
-
         updateRating();
         databaseReference=databaseFD.getReference("Answer");
         userAnswer.questName=currentQuest.qname;
@@ -590,6 +598,7 @@ public class TaskActivity extends AppCompatActivity {
                                     databaseFD.getReference("User").child(currentQuest.admins.get(0))
                                             .child("forCheking").setValue(forCheking);
                                     Toast.makeText(getBaseContext(), "Ваш ответ отправлен администратору", Toast.LENGTH_SHORT);
+                                    currentRating.progress.get(i).state=4;
                                     isitEnd();
                                 }
                             }
@@ -634,11 +643,9 @@ public class TaskActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("MyTag", "Destroyed");
         updateRating();
-        //TODO проверь меня
-        //if(!gotGPS){
-            markerCoordinates.clear();
-            markerCoordinatesDone.clear();
-            finish();//}
+        markerCoordinates.clear();
+        markerCoordinatesDone.clear();
+        finish();
         i=0;
     }
 
@@ -648,11 +655,6 @@ public class TaskActivity extends AppCompatActivity {
         super.onStop();
         Log.d("MyTag", "Stopped");
         updateRating();
-//        if(!gotGPS){
-//            markerCoordinates.clear();
-//            markerCoordinatesDone.clear();
-//            finish();}
-        // insert here your instructions
     }
 
     void updateRating(){
@@ -669,30 +671,8 @@ public class TaskActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         rating.dateEnd=fullQuestActivity.calendar_to_String(cal);}
 
-
-
-
-        List<Feature> coordinates;
-        if(!markerCoordinatesDone.isEmpty()){
-        coordinates=markerCoordinatesDone;
-        markerCoordinates.clear();
-        markerCoordinates.add(Feature.fromGeometry(
-                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));
-        coordinates.add(markerCoordinates.get(0));
-        }
-        else{
-            markerCoordinates.clear();
-            if(currentTask!=null){
-            markerCoordinates.add(Feature.fromGeometry(
-                    Point.fromLngLat( currentTask.longitude, currentTask.latitude)));}
-            coordinates=markerCoordinates;}
-        if(!coordinates.isEmpty()){
-        rating.coordinates= FeatureCollection.fromFeatures(coordinates).toJson();
-        ratingOld=rating;
-        }else{
-            try{
-            rating.coordinates=ratingOld.coordinates;}catch (Exception e){}
-        }
+        //TODO изменить
+        rating.progress= currentRating.progress;
 
 
         databaseReference=databaseFD.getReference("Rating");
@@ -702,6 +682,9 @@ public class TaskActivity extends AppCompatActivity {
         }
 
     }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);

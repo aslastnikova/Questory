@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F7FDFB"
     android:gravity="top"
-
+    android:id="@+id/parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
@@ -16,7 +16,10 @@
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foregroundGravity="top">
+        android:foregroundGravity="top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -164,7 +167,17 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+
+    <com.slastanna.questory.ProgressLine
+        android:id="@+id/progressLine"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 

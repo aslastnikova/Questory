@@ -157,6 +157,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements View.OnC
         else{
             wasAlreadySigned=true;
             setContentView(R.layout.loading_layout);
+            ((TextView)findViewById(R.id.versionView)).setText("v. "+BuildConfig.VERSION_NAME);
             signin(email, password);
         }
 

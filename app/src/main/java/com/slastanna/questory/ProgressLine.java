@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,25 +24,30 @@ public class ProgressLine extends View {
     Rect rect;
     int maxWidth, maxHeight;
     ArrayList<Integer> colors=new ArrayList<>();
-    int red, green, orange;
+    int red, green, orange, gray, white;
     Canvas canvas;
 
     public ProgressLine(Context context, @Nullable AttributeSet attr) {
         super(context, attr);
         p = new Paint();
         rect = new Rect();
-        red = this.getResources().getColor(R.color.design_default_color_error);
+        red = this.getResources().getColor(R.color.red);
         green = this.getResources().getColor(R.color.colorPrimary);
         orange = this.getResources().getColor(R.color.holo_orange_light);
+        gray = this.getResources().getColor(R.color.gray_inactive);
+        white = this.getResources().getColor(R.color.white);
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         this.canvas=canvas;
         if (canvas!=null){
         maxWidth=canvas.getWidth();
         maxHeight=canvas.getHeight();
+
+
         Log.d("MyTag", "maxheight "+maxHeight);
 
         if(colors.size()!=0){
@@ -57,6 +63,7 @@ public class ProgressLine extends View {
             canvas.drawLine(0,0,maxWidth,0,p);
             canvas.drawLine(0,maxHeight,maxWidth,maxHeight,p);
         }}
+
 
     }
 
@@ -78,13 +85,21 @@ public class ProgressLine extends View {
     }
 
     public void setLines(ArrayList<Integer> steps){
+        colors.clear();
         for(int i=0; i<steps.size(); i++){
             switch (steps.get(i)){
-                case 0: colors.add(red); break;
-                case 1: colors.add(orange); break;
-                case 2: colors.add(green); break;
+                case 0: colors.add(white); break; // current or next step
+                case 1: colors.add(red); break; // mistake
+                case 2: colors.add(orange); break; // non-fully correct
+                case 3: colors.add(green); break; // fully correct
+                case 4: colors.add(gray); break; // waiting for answer
             }
         }
+        //canvas.restore();
+       // p.setColor(orange);
+       // p.setStrokeWidth(maxHeight);
+        //canvas.drawLine(0, 0, canvas.getWidth(), canvas.getHeight(), p);
+        //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
         draw(canvas);
     }
 

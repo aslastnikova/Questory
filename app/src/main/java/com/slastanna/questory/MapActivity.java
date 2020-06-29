@@ -54,6 +54,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.*;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField;
+import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 
 /**
  * Use the Mapbox Core Library to receive updates when the device changes location.
@@ -137,8 +138,8 @@ public class MapActivity extends AppCompatActivity implements
         grayMarker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MapActivity.this, "Адрес следующей точки скрыт, решите задание, чтобы узнать куда добираться.", Toast.LENGTH_LONG).show();
-            }
+                Toast.makeText(MapActivity.this, "Адрес следующей точки скрыт, решите задание, чтобы узнать, куда добираться.", Toast.LENGTH_LONG).show();
+        }
         });}
     }
 
@@ -162,6 +163,8 @@ public class MapActivity extends AppCompatActivity implements
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
                 change_language(style);
+
+
 
                 style.addSource(new GeoJsonSource("done-marker-source",
                         FeatureCollection.fromFeatures(markerCoordinatesDone)));

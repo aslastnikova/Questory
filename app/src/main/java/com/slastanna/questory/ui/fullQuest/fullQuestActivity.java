@@ -3,14 +3,13 @@ package com.slastanna.questory.ui.fullQuest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import com.slastanna.questory.ProgressLine;
 import com.slastanna.questory.R;
 import com.slastanna.questory.TaskActivity;
+import com.slastanna.questory.tables.ProgressTracker;
 import com.slastanna.questory.tables.Quest;
 import com.slastanna.questory.tables.Rating;
 import com.slastanna.questory.tables.Task;
@@ -31,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,19 +40,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import static com.slastanna.questory.EmailPasswordActivity.databaseFD;
 import static com.slastanna.questory.EmailPasswordActivity.databaseReference;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrent;
 import static com.slastanna.questory.EmailPasswordActivity.userCurrentKey;
-import static com.slastanna.questory.MapActivity.context;
 import static com.slastanna.questory.MapActivity.hiddenadress;
 import static com.slastanna.questory.MapActivity.markerCoordinates;
 import static com.slastanna.questory.MapActivity.markerCoordinatesDone;
 import static com.slastanna.questory.TaskActivity.ratingKey;
+import static com.slastanna.questory.TaskActivity.currentRating;
 //import static com.example.questory3.TaskActivity.alltasks;
 
 public class fullQuestActivity extends AppCompatActivity {
@@ -85,11 +81,13 @@ public class fullQuestActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        //TODO трекер прогресса
+//        ArrayList<Integer> steps = new ArrayList<>();
+//        steps.add(0); steps.add(1); steps.add(2);
+//        ProgressLine progressLine = findViewById(R.id.progressLine);
+//        progressLine.setLines(steps);
 
-        ArrayList<Integer> steps = new ArrayList<>();
-        steps.add(0); steps.add(1); steps.add(2);
-        ProgressLine progressLine = findViewById(R.id.progressLine);
-        progressLine.setLines(steps);
+
         qname = findViewById(R.id.qname);
         qdesc = findViewById(R.id.qdecription);
         qduratation = findViewById(R.id.qduratation);
@@ -132,61 +130,90 @@ public class fullQuestActivity extends AppCompatActivity {
                                             TaskActivity.hint_taken=currentRating.hintTaken;
                                             if(currentQuest.tasks.contains(currentRating.lastTaskKey)){
                                                 int j = currentQuest.tasks.indexOf(currentRating.lastTaskKey);
-                                                databaseReference=databaseFD.getReference("Task");
+//                                                databaseReference=databaseFD.getReference("Task");
+//
+//                                                Query query= databaseReference.orderByKey().equalTo(currentRating.lastTaskKey);
+//                                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                    @Override
+//                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                        // Log.d("MyTag", "Value is: " + dataSnapshot);
+//                                                        if (dataSnapshot.exists()) {
+//
+//                                                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
+//                                                                Log.d("MyTag", "issue: "+issue);
+//                                                                currentTask=issue.getValue(Task.class);
+//
+//                                                                if(currentTask!=null){
+//
+//                                                                    try{
+//
+//                                                                        if(currentRating.coordinates!=null){
+//
+//                                                                            markerCoordinatesDone = FeatureCollection.fromJson(currentRating.coordinates).features();
+//
+//                                                                            if(!currentTask.hiddenAddress){
+//                                                                                hiddenadress=false;
+//                                                                                //markerCoordinates.clear();
+//                                                                                markerCoordinates.add(markerCoordinatesDone.get(j));}else {
+//                                                                                hiddenadress=true;
+//                                                                            }
+//
+//                                                                            markerCoordinatesDone.remove(j);
+//                                                                        }}catch (Exception e){}
+//
+//                                                                    //Unable to invoke no-args constructor for interface com.mapbox.geojson.Geometry. Registering an InstanceCreator with Gson for this type may fix this problem.
+//                                                                    TaskActivity.i=j;
+//                                                                    TaskActivity.dateStart=currentRating.dateStart;
+//                                                                    TaskActivity.currentRating=currentRating;
+//                                                                    Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
+//                                                                    startActivity(intent);
+//                                                                    fab.setEnabled(true);
+//                                                                    // answer.setVisibility(View.VISIBLE);
+//
+//                                                                    break;
+//                                                                }
+//
+//                                                            }
+//                                                        }  //Player playerServer = dataSnapshot.getValue(Player.class);
+//                                                        // Log.d(Tag, "Value is: " + value);
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onCancelled(DatabaseError error) {
+//                                                        // Failed to read value
+//                                                        // Log.w(TAG, "Failed to read value.", error.toException());
+//                                                    }
+//                                                });
 
-                                                Query query= databaseReference.orderByKey().equalTo(currentRating.lastTaskKey);
-                                                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        // Log.d("MyTag", "Value is: " + dataSnapshot);
-                                                        if (dataSnapshot.exists()) {
+                                                //TODO написать заполнение markerCoord и markerCoordDone
+                                                int n=0;
+                                                do{
+                                                    Log.d("MyTag", "level: "+n);
+                                                    Log.d("MyTag", "coord: "+currentRating.progress.get(n).coordinates);
+                                                    switch (currentRating.progress.get(n).mapstate){
+                                                        case 0:
+                                                            markerCoordinates.add(Feature.fromJson(currentRating.progress.get(n).coordinates));
+                                                            //markerCoordinates.add(Feature.fromGeometry(Point.fromJson(currentRating.progress.get(n).coordinates)));
+                                                        hiddenadress=false; break;
+                                                        case 1: hiddenadress=true; break;
+                                                        case 2:
+                                                            markerCoordinatesDone.add(Feature.fromJson(currentRating.progress.get(n).coordinates));
+                                                            //markerCoordinatesDone.add(Feature.fromGeometry(Point.fromJson(currentRating.progress.get(n).coordinates)));
+                                                        hiddenadress=false; break;
 
-                                                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                                                                Log.d("MyTag", "issue: "+issue);
-                                                                currentTask=issue.getValue(Task.class);
-
-                                                                if(currentTask!=null){
-
-                                                                    try{
-
-                                                                        if(currentRating.coordinates!=null){
-
-                                                                            markerCoordinatesDone = FeatureCollection.fromJson(currentRating.coordinates).features();
-
-                                                                            if(!currentTask.hiddenAddress){
-                                                                                hiddenadress=false;
-                                                                                //markerCoordinates.clear();
-                                                                                markerCoordinates.add(markerCoordinatesDone.get(j));}else {
-                                                                                hiddenadress=true;
-                                                                            }
-
-
-
-                                                                            markerCoordinatesDone.remove(j);
-                                                                        }}catch (Exception e){}
-
-                                                                    //Unable to invoke no-args constructor for interface com.mapbox.geojson.Geometry. Registering an InstanceCreator with Gson for this type may fix this problem.
-                                                                    TaskActivity.i=j;
-                                                                    TaskActivity.dateStart=currentRating.dateStart;
-                                                                    Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
-                                                                    startActivity(intent);
-                                                                    fab.setEnabled(true);
-                                                                    // answer.setVisibility(View.VISIBLE);
-
-                                                                    break;
-                                                                }
-
-                                                            }
-                                                        }  //Player playerServer = dataSnapshot.getValue(Player.class);
-                                                        // Log.d(Tag, "Value is: " + value);
                                                     }
+                                                    n++;
+                                                }while(n<=j);
+                                                Log.d("MyTag", "j = "+j);
+                                                TaskActivity.i=j;
+                                                TaskActivity.dateStart=currentRating.dateStart;
+                                                TaskActivity.currentRating =currentRating;
+                                                Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
+                                                startActivity(intent);
+                                                fab.setEnabled(true);
+                                                break;
 
-                                                    @Override
-                                                    public void onCancelled(DatabaseError error) {
-                                                        // Failed to read value
-                                                        // Log.w(TAG, "Failed to read value.", error.toException());
-                                                    }
-                                                });
+                                                // конец TODO
 
                                             }
                                             break;
@@ -374,7 +401,6 @@ public class fullQuestActivity extends AppCompatActivity {
 
             rating.lastTaskKey = currentQuest.tasks.get(0);
             rating.points = 0;
-
             databaseReference = databaseFD.getReference("Task");
 
             Query query = databaseReference.orderByKey().equalTo(currentQuest.tasks.get(0));
@@ -388,21 +414,30 @@ public class fullQuestActivity extends AppCompatActivity {
                                 rating.attemptsOnLastTask = task.attempts;
                                 databaseReference = databaseFD.getReference("Rating");
                                 TaskActivity.currentAttempts = rating.attemptsOnLastTask;
-                                List<Feature> markerCoordinatesTask = new ArrayList<>();
-                                markerCoordinatesTask.add(Feature.fromGeometry(
-                                        Point.fromLngLat(task.longitude, task.latitude)));
-                                rating.coordinates = FeatureCollection.fromFeatures(markerCoordinatesTask).toJson();
+//                                List<Feature> markerCoordinatesTask = new ArrayList<>();
+//                                markerCoordinatesTask.add(Feature.fromGeometry(
+//                                        Point.fromLngLat(task.longitude, task.latitude)));
+//                                rating.coordinates = FeatureCollection.fromFeatures(markerCoordinatesTask).toJson();
+                                //TODO test new rating
+                                String s = Feature.fromGeometry(Point.fromLngLat(task.longitude, task.latitude)).toJson();
+                                int mapstate=0;
+                                if(task.hiddenAddress){mapstate=1;}
+                                rating.progress.add(new ProgressTracker(s, 0, mapstate));
+                                for (int i = 0; i < currentQuest.tasks.size()-1; i++) {
+                                    rating.progress.add(new ProgressTracker(null, 0));
+                                }
 
                                 Calendar cal = Calendar.getInstance();
                                 rating.dateStart = calendar_to_String(cal);
                                 TaskActivity.dateStart = calendar_to_String(cal);
-                                if (!task.hiddenAddress) {
-                                    markerCoordinates.add(markerCoordinatesTask.get(0));
-                                }
+//                                if (!task.hiddenAddress) {
+//                                    markerCoordinates.add(markerCoordinatesTask.get(0));
+//                                }
                                 databaseReference.push().setValue(rating, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                         ratingKey = databaseReference.getKey();
+                                        currentRating =rating;
                                         Intent intent = new Intent(fullQuestActivity.this, TaskActivity.class);
                                         startActivity(intent);
                                         fab.setEnabled(true);
@@ -429,6 +464,23 @@ public class fullQuestActivity extends AppCompatActivity {
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
+//    public void testNewRating(Rating currentRating){
+//        HashMap<String, Integer> coordinatesHash = new HashMap<String, Integer>();
+//        List<Feature> coord = FeatureCollection.fromJson(currentRating.coordinates).features();
+//        for (int i = 0; i < coord.size(); i++) {
+//            coordinatesHash.put(coord.get(i).toJson(), i);
+//        }
+//        databaseFD.getReference("Coordinates").push().setValue(coordinatesHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+//                if(task.isSuccessful()){
+//                    Log.d("Coord", "Coordinates added");
+//                }else{
+//                    Log.d("Coord", "Coordinates weren't added: "+task.getException());
+//                }
+//            }
+//        });
+//    }
 
     // переводит строку в изображение
     public static Bitmap decodeBase64(String input)

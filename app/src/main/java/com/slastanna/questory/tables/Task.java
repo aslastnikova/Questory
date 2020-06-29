@@ -15,7 +15,7 @@ public class Task {
     public String hint, taskComment;
     public int taskCost, hintPoints;
     public int geoRadius;
-    public float longitude, latitude;
+    public double longitude, latitude;
     public Task(){}
     public Task(String questKey, boolean forAdmin, int num, String taskText)
     {
